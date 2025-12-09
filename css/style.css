@@ -1,4 +1,5 @@
 @charset "utf-8";
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
 * {
     box-sizing: border-box;
@@ -9,43 +10,41 @@ body {
     background-color: #0a0a0a;
 }
 
-.header {
+header {
     width: 100%;
-    height: 100px;
     position: fixed;
     top: 0;
     right: 0;
     z-index: 100;
-}
-
-.header nav {
+    padding: 2rem;
     display: flex;
     justify-content: flex-end;
-    padding: 2rem;
 }
 
-.header ul {
+
+
+
+header ul {
     display: flex;
     gap: 2rem;
-    list-style: none;
 }
 
-.header ul li a {
+header ul li a {
     color: #fafafa;
     font-size: 14px;
     transition: color 0.3s;
 }
 
-.header ul li a:hover {
+header ul li a:hover {
     color: #FFCA45;
 }
 
-.header.dark ul li a {
+header.dark ul li a {
     color: #111;
     /* 검정색 */
 }
 
-.header.dark ul li a:hover {
+header.dark ul li a:hover {
     color: #FFCA45;
     /* 포트폴리오 포인트 컬러 */
 }
@@ -53,9 +52,6 @@ body {
 .intro {
     width: 100%;
     min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
     background-color: #0a0a0a;
     position: relative;
     overflow: hidden;
@@ -63,6 +59,7 @@ body {
 
 .intro_content {
     width: 100%;
+    height: 100vh;
     position: relative;
 }
 
@@ -72,7 +69,7 @@ body {
     top: 30%;
     opacity: 0;
     transform: translateY(50px);
-    transition: all 0.8s ease;
+    z-index: 100;
 }
 
 .year {
@@ -91,12 +88,11 @@ body {
 }
 
 .sunflower01 {
-    max-width: 800px;
-    width: 100%;
-    height: auto;
-    margin: 0 auto;
-    display: block;
     transition: all 0.8s ease;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .scroll_indicator {
@@ -110,13 +106,21 @@ body {
 }
 
 .contents {
+    padding-top: 50vh;
     width: 100%;
     min-height: 100vh;
-    background-color: #FAFAFA;
+    background-color: #0a0a0a;
+}
+
+.contents .container {
+    width: 100%;
+    height: 100vh;
+    position: relative;
     display: flex;
     padding: 0 8%;
     align-items: center;
     gap: 5rem;
+    background-color: #fafafa;
 }
 
 /* 왼쪽 해바라기 */
