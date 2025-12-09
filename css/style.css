@@ -12,16 +12,98 @@ body {
 .header {
     width: 100%;
     height: 100px;
-    background: #ddd;
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 100;
 }
 
+.header nav {
+    display: flex;
+    justify-content: flex-end;
+    padding: 2rem;
+}
 
 .header ul {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
-    color: #fafafa;
-    font-size: 18px;
+    gap: 2rem;
+    list-style: none;
+}
 
+.header ul li a {
+    color: #fafafa;
+    font-size: 14px;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.header ul li a:hover {
+    color: #FFCA45;
+}
+
+.intro {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    background-color: #0a0a0a;
+    position: relative;
+    overflow: hidden;
+}
+
+.intro_content {
+    width: 100%;
+    max-width: 1400px;
+    position: relative;
+    padding: 2rem;
+}
+
+.intro_text {
+    position: absolute;
+    left: 5%;
+    top: 30%;
+    opacity: 0;
+    transform: translateY(50px);
+    transition: all 0.8s ease;
+}
+
+.intro_text.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.year {
+    font-size: 1.2rem;
+    font-weight: 300;
+    letter-spacing: -0.01em;
+    margin-bottom: 1rem;
+    color: #fafafa;
+}
+
+.name {
+    font-size: 5rem;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    color: #fafafa;
+}
+
+.sunflower {
+    max-width: 800px;
+    width: 100%;
+    height: auto;
+    margin: 0 auto;
+    display: block;
+    align-items: flex-end;
+    transition: all 0.8s ease;
+}
+
+.scroll_indicator {
+    position: absolute;
+    bottom: 3rem;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #fafafa;
+    font-size: 0.9rem;
+    letter-spacing: 0.2em;
 }
