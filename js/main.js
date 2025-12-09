@@ -5,9 +5,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==================== Lenis ====================
     const lenis = new Lenis({
         duration: 0.8,
-        easing: (t) => t, // 선형 (빠른 반응)
+        easing: (t) => t,
         smooth: true,
-        smoothTouch: true, // 모바일 터치 스크롤 부드럽게
+        smoothTouch: true,
     });
 
     function raf(t) {
@@ -16,7 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
         requestAnimationFrame(raf);
     }
     requestAnimationFrame(raf);
-
 
     const header = document.querySelector('header');
     const contentsSection = document.querySelector('.contents');
@@ -36,34 +35,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
     observer.observe(contentsSection);
 
-
     // ==================== Intro 스크롤 애니메이션 ====================
     const introTimeline = gsap.timeline({
         scrollTrigger: {
             trigger: '.intro',
             start: 'top top',
-            end: 'bottom top',
-            scrub: 1,
+            end: '+=200%',
+            scrub: 2,
             pin: true,
-            markers: false, // 디버깅 시 true로 변경
+            markers: false,
         }
     });
 
-    // 영상을 y: 100, x: 100으로 이동하면서 텍스트 표시
     introTimeline
         .to('.sunflower01', {
             x: 200,
-            y: 200,
+            y: 500,
             scale: 1,
-            duration: 1,
-            ease: 'power2.inOut'
-        })
+            ease: 'none'
+        }, 0)
         .to('.intro_text', {
             opacity: 1,
             y: 0,
-            duration: 0.8,
-            ease: 'power2.out'
-        }, '-=0.5'); // 영상 이동과 약간 겹치게 시작
+            ease: 'none'
+        }, 0)
+        .to({}, { duration: 2 });
+
+    // ==================== Contents 섹션 고정 ====================
+    ScrollTrigger.create({
+        trigger: '.contents',
+        start: 'top top',
+        end: '+=200%',
+        pin: true,
+        pinSpacing: true,
+        markers: false,
+    });
 })
-
-

@@ -106,7 +106,7 @@ header.dark ul li a:hover {
 }
 
 .contents {
-    padding-top: 50vh;
+    /* padding-top: 50vh; */
     width: 100%;
     min-height: 100vh;
     background-color: #0a0a0a;
@@ -133,7 +133,7 @@ header.dark ul li a:hover {
 
 .sunflower02 {
     width: 100%;
-    max-width: 800px;
+    max-width: 900px;
     /* 꽃 크기 조절 */
     transform: translateY(40px);
     /* 레퍼런스처럼 살짝 아래로 */
