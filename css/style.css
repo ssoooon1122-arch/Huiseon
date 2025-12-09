@@ -40,6 +40,16 @@ body {
     color: #FFCA45;
 }
 
+.header.dark ul li a {
+    color: #111;
+    /* 검정색 */
+}
+
+.header.dark ul li a:hover {
+    color: #FFCA45;
+    /* 포트폴리오 포인트 컬러 */
+}
+
 .intro {
     width: 100%;
     min-height: 100vh;
@@ -80,7 +90,7 @@ body {
     color: #fafafa;
 }
 
-.sunflower {
+.sunflower01 {
     max-width: 800px;
     width: 100%;
     height: auto;
@@ -97,4 +107,67 @@ body {
     color: #fafafa;
     font-size: 0.9rem;
     letter-spacing: 0.2em;
+}
+
+.contents {
+    width: 100%;
+    min-height: 100vh;
+    background-color: #FAFAFA;
+    display: flex;
+    padding: 0 8%;
+    align-items: center;
+    gap: 5rem;
+}
+
+/* 왼쪽 해바라기 */
+.contents_left {
+    flex: 0 0 45%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-end;
+}
+
+.sunflower02 {
+    width: 100%;
+    max-width: 800px;
+    /* 꽃 크기 조절 */
+    transform: translateY(40px);
+    /* 레퍼런스처럼 살짝 아래로 */
+}
+
+/* 오른쪽 텍스트 */
+.contents_right {
+    flex: 0 0 55%;
+}
+
+.contents_title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.05em;
+}
+
+.contents_list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    margin-top: 2rem;
+}
+
+.contents_list li {
+    display: flex;
+    align-items: center;
+    gap: 1.3rem;
+    margin-bottom: 1.4rem;
+    font-size: 1.6rem;
+}
+
+.num {
+    color: #FFCA45;
+    font-weight: 700;
+}
+
+.txt {
+    color: #111;
+    font-weight: 500;
 }
