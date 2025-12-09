@@ -1,4 +1,9 @@
 @charset "utf-8";
-*{
+
+* {
     box-sizing: border-box;
+}
+
+body {
+    font-family: 'Montserrat', 'Spoqa Han Sans Neo', sans-serif;
 }
