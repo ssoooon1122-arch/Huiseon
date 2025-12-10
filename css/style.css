@@ -181,17 +181,26 @@ header.dark ul li a:hover {
     min-height: 100vh;
     background-color: #0a0a0a;
     padding-top: 136px;
-    /* 섹션 시작 → 제목까지 여백 */
     padding-bottom: 80px;
-    /* 아래 여유 (원하는 만큼) */
     box-sizing: border-box;
+    perspective: 2000px;
+    /* 3D 효과를 위한 perspective */
+    perspective-origin: center center;
+}
+
+.projects_content {
+    position: relative;
+    min-height: 100vh;
+    overflow-x: hidden;
+    width: 100%;
 }
 
 .projects_txt {
     width: 100%;
     text-align: center;
-    margin-bottom: 106px;
-    /* 제목 → 카드까지 여백 */
+    margin-bottom: 80px;
+    position: relative;
+    z-index: 10;
 }
 
 .projects_txt .title {
@@ -209,11 +218,29 @@ header.dark ul li a:hover {
 .box {
     width: 840px;
     height: 600px;
-    margin: 0 auto;
     padding: 40px;
     border: 2px solid #FFCA45;
     box-sizing: border-box;
-    /* 중요! */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) translateZ(-1000px) scale(0.6);
+    opacity: 0.6;
+    will-change: transform, opacity;
+    z-index: 1;
+    background-color: #0a0a0a;
+    /* 기본 z-index */
+}
+
+/* 모든 박스를 중앙에 배치 */
+.box_1,
+.box_4 {
+    left: 40%;
+}
+
+.box_2,
+.box_3 {
+    left: 80%;
 }
 
 .box_1,
@@ -222,12 +249,11 @@ header.dark ul li a:hover {
 .box_4 {
     display: flex;
     gap: 40px;
-    /* 왼쪽 이미지와 오른쪽 텍스트 사이 간격 */
     justify-content: space-between;
-    /* 오른쪽 정렬 */
     align-items: center;
-    /* 위쪽 정렬 */
 }
+
+
 
 .box_left img {
     display: block;
