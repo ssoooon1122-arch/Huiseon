@@ -185,7 +185,7 @@ header.dark ul li a:hover {
     position: relative;
     overflow: hidden;
     /* ★ 핵심: 원근감 설정 (값이 작을수록 왜곡이 심하고 역동적) */
-    perspective: 1000px;
+    perspective: 1500px;
 }
 
 .projects_content {
@@ -222,30 +222,26 @@ header.dark ul li a:hover {
 
 /* ★ 모든 박스를 화면 정중앙에 겹쳐둠 (좌우 배치 제거) ★ */
 .box {
-    width: 800px;
+    width: 700px;
+    /* 박스 크기 살짝 조정 */
     height: 500px;
     padding: 40px;
     border: 2px solid #FFCA45;
     background-color: #0a0a0a;
 
-    /* 절대 위치로 중앙 정렬 */
+    /* 화면 정중앙 기준점 잡기 */
     position: absolute;
     top: 50%;
     left: 50%;
 
-    /* JS가 제어할 것이므로 초기 transform 설정 */
-    transform: translate(-50%, -50%) translateZ(0);
-    will-change: transform, opacity;
+    /* 중심점만 잡아두고, 나머지는 JS가 움직입니다 */
+    transform: translate(-50%, -50%);
 
+    will-change: transform, opacity;
     display: flex;
     gap: 40px;
     align-items: center;
-
-    /* 깊이감을 위한 그림자 */
-    box-shadow: 0 0 100px rgba(0, 0, 0, 0.9);
-
-    /* 처음엔 안 보이게 (JS로 등장시킴) */
-    opacity: 0;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
 }
 
 /* 기존 내부 스타일 유지 */
