@@ -176,101 +176,88 @@ header.dark ul li a:hover {
     font-weight: 500;
 }
 
+/* style.css 수정 부분 */
+
 .projects {
     width: 100%;
-    min-height: 100vh;
+    height: 100vh;
     background-color: #0a0a0a;
-    padding-top: 136px;
-    padding-bottom: 80px;
-    box-sizing: border-box;
-    perspective: 2000px;
-    perspective-origin: center center;
+    position: relative;
+    overflow: hidden;
+    /* ★ 핵심: 원근감 설정 (값이 작을수록 왜곡이 심하고 역동적) */
+    perspective: 1000px;
 }
 
 .projects_content {
-    position: relative;
-    min-height: 100vh;
-    overflow-x: hidden;
     width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    /* 3D 공간 유지 */
 }
 
+/* 텍스트는 맨 뒤나 맨 앞에 고정 */
 .projects_txt {
-    width: 100%;
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%);
     text-align: center;
-    margin-bottom: 80px;
-    position: relative;
     z-index: 10;
+    width: 100%;
+    pointer-events: none;
+    /* 클릭 방지 */
 }
 
 .projects_txt .title {
-    font-size: 6.25rem;
+    font-size: 5rem;
     font-weight: 700;
     color: #fafafa;
 }
 
 .projects_txt .subtitle {
-    font-size: 2.5rem;
-    font-weight: 500;
+    font-size: 1.5rem;
     color: rgba(250, 250, 250, 0.5);
 }
 
+/* ★ 모든 박스를 화면 정중앙에 겹쳐둠 (좌우 배치 제거) ★ */
 .box {
-    width: 840px;
-    height: 600px;
+    width: 800px;
+    height: 500px;
     padding: 40px;
     border: 2px solid #FFCA45;
-    box-sizing: border-box;
+    background-color: #0a0a0a;
+
+    /* 절대 위치로 중앙 정렬 */
     position: absolute;
     top: 50%;
-    background-color: #0a0a0a;
+    left: 50%;
+
+    /* JS가 제어할 것이므로 초기 transform 설정 */
+    transform: translate(-50%, -50%) translateZ(0);
     will-change: transform, opacity;
+
     display: flex;
     gap: 40px;
-    justify-content: space-between;
     align-items: center;
+
+    /* 깊이감을 위한 그림자 */
+    box-shadow: 0 0 100px rgba(0, 0, 0, 0.9);
+
+    /* 처음엔 안 보이게 (JS로 등장시킴) */
+    opacity: 0;
 }
 
-/* 1번: 왼쪽 맨 앞 */
-.box_1 {
-    left: calc(50% - 420px);
-    /* 중앙에서 왼쪽으로 크게 */
-    transform: translate(-50%, -50%) translateZ(0) scale(1);
-    opacity: 1;
-    z-index: 4;
+/* 기존 내부 스타일 유지 */
+.box_left {
+    flex: 0 0 45%;
+    overflow: hidden;
 }
-
-/* 2번: 오른쪽 맨 앞 */
-.box_2 {
-    left: calc(50% + 420px);
-    /* 중앙에서 오른쪽으로 크게 */
-    transform: translate(-50%, -50%) translateZ(-800px) scale(0.85);
-    opacity: 1;
-    z-index: 3;
-}
-
-/* 3번: 1번 뒤, 살짝 안쪽 */
-.box_3 {
-    left: calc(50% - 360px);
-    /* 1번보다 조금 안쪽으로 */
-    transform: translate(-50%, -50%) translateZ(-1600px) scale(0.7);
-    opacity: 1;
-    z-index: 2;
-}
-
-/* 4번: 2번 뒤, 살짝 안쪽 */
-.box_4 {
-    left: calc(50% + 360px);
-    /* 2번보다 조금 안쪽으로 */
-    transform: translate(-50%, -50%) translateZ(-2400px) scale(0.6);
-    opacity: 1;
-    z-index: 1;
-}
-
 
 .box_left img {
-    display: block;
     width: 100%;
     height: auto;
+    object-fit: cover;
 }
 
 .box_right {
@@ -280,56 +267,48 @@ header.dark ul li a:hover {
 }
 
 .box_right .box_label {
-    font-size: 1.25rem;
-    font-weight: 500;
     color: #FFCA45;
+    font-size: 1rem;
     margin-bottom: 8px;
 }
 
 .box_right .box_title {
-    font-size: 2.5rem;
-    font-weight: 700;
     color: #fafafa;
+    font-size: 2.2rem;
+    font-weight: 700;
     margin-bottom: 12px;
 }
 
 .box_right .box_date {
-    font-size: 1rem;
-    font-weight: 500;
     color: rgba(250, 250, 250, 0.5);
-    padding-bottom: 18px;
     border-bottom: 1px solid #FFCA45;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
 }
 
 .box_right .box_txt {
-    font-size: 1rem;
-    font-weight: 300;
-    line-height: 25px;
     color: #fafafa;
-    margin-top: 28px;
-    margin-bottom: 68px;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 40px;
 }
 
 .btns {
     display: flex;
-    gap: 24px;
+    gap: 15px;
 }
 
 .btns .box_btn {
-    width: 164px;
-    height: 64px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    padding: 12px 30px;
     border: 1px solid #FFCA45;
-    text-decoration: none;
-    font-size: 1.25rem;
-    font-weight: 500;
     color: #fafafa;
     transition: all 0.3s;
+    text-align: center;
 }
 
 .btns .box_btn:hover {
     background: #FFCA45;
     color: #000;
 }
+
+/* ★ 중요: 기존 .box_1, .box_2 등의 개별 위치 값은 삭제하거나 무시해야 함 ★ */
