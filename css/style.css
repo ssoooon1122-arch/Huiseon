@@ -135,7 +135,7 @@ header.dark ul li a:hover {
     width: 100%;
     max-width: 900px;
     /* 꽃 크기 조절 */
-    transform: translateY(40px);
+    transform: translateY(20px);
     /* 레퍼런스처럼 살짝 아래로 */
 }
 
@@ -174,4 +174,124 @@ header.dark ul li a:hover {
 .txt {
     color: #111;
     font-weight: 500;
+}
+
+.projects {
+    width: 100%;
+    min-height: 100vh;
+    background-color: #0a0a0a;
+    padding-top: 136px;
+    /* 섹션 시작 → 제목까지 여백 */
+    padding-bottom: 80px;
+    /* 아래 여유 (원하는 만큼) */
+    box-sizing: border-box;
+}
+
+.projects_txt {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 106px;
+    /* 제목 → 카드까지 여백 */
+}
+
+.projects_txt .title {
+    font-size: 6.25rem;
+    font-weight: 700;
+    color: #fafafa;
+}
+
+.projects_txt .subtitle {
+    font-size: 2.5rem;
+    font-weight: 500;
+    color: rgba(250, 250, 250, 0.5);
+}
+
+.box {
+    width: 840px;
+    height: 600px;
+    margin: 0 auto;
+    padding: 40px;
+    border: 2px solid #FFCA45;
+    box-sizing: border-box;
+    /* 중요! */
+}
+
+.box_1,
+.box_2,
+.box_3,
+.box_4 {
+    display: flex;
+    gap: 40px;
+    /* 왼쪽 이미지와 오른쪽 텍스트 사이 간격 */
+    justify-content: space-between;
+    /* 오른쪽 정렬 */
+    align-items: center;
+    /* 위쪽 정렬 */
+}
+
+.box_left img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+/* 오른쪽 텍스트 영역 */
+.box_right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.box_right .box_label {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #FFCA45;
+    margin-bottom: 8px;
+}
+
+.box_right .box_title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #fafafa;
+    margin-bottom: 12px;
+}
+
+.box_right .box_date {
+    font-size: 1rem;
+    font-weight: 500;
+    color: rgba(250, 250, 250, 0.5);
+    padding-bottom: 18px;
+    border-bottom: 1px solid #FFCA45;
+}
+
+.box_right .box_txt {
+    font-size: 1rem;
+    font-weight: 300;
+    line-height: 25px;
+    color: #fafafa;
+    margin-top: 28px;
+    margin-bottom: 68px;
+}
+
+.btns {
+    display: flex;
+    gap: 24px;
+}
+
+.btns .box_btn {
+    width: 164px;
+    height: 64px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #FFCA45;
+    text-decoration: none;
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #fafafa;
+}
+
+.btns .box_btn:hover {
+    background: #FFCA45;
+    color: #000;
 }
