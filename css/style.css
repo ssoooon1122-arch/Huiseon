@@ -184,7 +184,6 @@ header.dark ul li a:hover {
     padding-bottom: 80px;
     box-sizing: border-box;
     perspective: 2000px;
-    /* 3D 효과를 위한 perspective */
     perspective-origin: center center;
 }
 
@@ -223,36 +222,49 @@ header.dark ul li a:hover {
     box-sizing: border-box;
     position: absolute;
     top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) translateZ(-1000px) scale(0.6);
-    opacity: 0.6;
-    will-change: transform, opacity;
-    z-index: 1;
     background-color: #0a0a0a;
-    /* 기본 z-index */
-}
-
-/* 모든 박스를 중앙에 배치 */
-.box_1,
-.box_4 {
-    left: 40%;
-}
-
-.box_2,
-.box_3 {
-    left: 80%;
-}
-
-.box_1,
-.box_2,
-.box_3,
-.box_4 {
+    will-change: transform, opacity;
     display: flex;
     gap: 40px;
     justify-content: space-between;
     align-items: center;
 }
 
+/* 1번: 왼쪽 맨 앞 */
+.box_1 {
+    left: calc(50% - 420px);
+    /* 중앙에서 왼쪽으로 크게 */
+    transform: translate(-50%, -50%) translateZ(0) scale(1);
+    opacity: 1;
+    z-index: 4;
+}
+
+/* 2번: 오른쪽 맨 앞 */
+.box_2 {
+    left: calc(50% + 420px);
+    /* 중앙에서 오른쪽으로 크게 */
+    transform: translate(-50%, -50%) translateZ(-800px) scale(0.85);
+    opacity: 1;
+    z-index: 3;
+}
+
+/* 3번: 1번 뒤, 살짝 안쪽 */
+.box_3 {
+    left: calc(50% - 360px);
+    /* 1번보다 조금 안쪽으로 */
+    transform: translate(-50%, -50%) translateZ(-1600px) scale(0.7);
+    opacity: 1;
+    z-index: 2;
+}
+
+/* 4번: 2번 뒤, 살짝 안쪽 */
+.box_4 {
+    left: calc(50% + 360px);
+    /* 2번보다 조금 안쪽으로 */
+    transform: translate(-50%, -50%) translateZ(-2400px) scale(0.6);
+    opacity: 1;
+    z-index: 1;
+}
 
 
 .box_left img {
@@ -261,7 +273,6 @@ header.dark ul li a:hover {
     height: auto;
 }
 
-/* 오른쪽 텍스트 영역 */
 .box_right {
     flex: 1;
     display: flex;
@@ -315,6 +326,7 @@ header.dark ul li a:hover {
     font-size: 1.25rem;
     font-weight: 500;
     color: #fafafa;
+    transition: all 0.3s;
 }
 
 .btns .box_btn:hover {
