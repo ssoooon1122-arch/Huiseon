@@ -70,27 +70,32 @@ document.addEventListener('DOMContentLoaded', () => {
         pinSpacing: true,
         markers: false,
     });
-    // ==================== PROJECTS 3D Tunnel Effect ====================
+    // main.js - Projects 섹션 부분 (전체 교체)
 
+    // ==============================================
+    // ★ PROJECTS 3D Tunnel & Drop Effect ★
+    // ==============================================
+
+    const projectsSection = document.querySelector('.projects');
     const boxes = gsap.utils.toArray('.box');
 
-    // 1. 설정값 조절
-    const zGap = 1500;       // 박스 사이의 깊이 간격 (너무 멀면 안 보임)
-    const xOffset = 300;     // 좌우로 벌어질 거리 (픽셀 단위)
+    // 1. 설정값 조절 (취향에 따라 숫자 조절 가능)
+    const zGap = 1800;        // 박스 간격 (넓을수록 깊이감 커짐)
+    const xOffset = 350;      // 좌우 벌어짐 정도
     const totalDistance = zGap * boxes.length;
 
-    // 2. 초기 위치 세팅 (지그재그 배치 + 깊이 배치)
+    // 2. 초기 위치 세팅
     boxes.forEach((box, i) => {
-        // 홀수는 왼쪽(-), 짝수는 오른쪽(+)
-        // i % 2 === 0 은 짝수(0, 2, 4...), i % 2 !== 0 은 홀수(1, 3...)
+        // 지그재그 배치: 짝수는 오른쪽(+), 홀수는 왼쪽(-)
         const xPosition = (i % 2 === 0) ? xOffset : -xOffset;
 
         gsap.set(box, {
-            z: -i * zGap,       // 뒤쪽으로 배치
-            x: xPosition,       // 좌우 지그재그 배치
-            xPercent: -50,      // 요소의 중심을 맞추기 위한 보정
-            yPercent: -50,      // 요소의 중심을 맞추기 위한 보정
-            opacity: 0          // 처음엔 부드럽게 등장시키기 위해 0
+            z: -i * zGap,       // 뒤쪽 깊숙이 배치
+            x: xPosition,       // 좌우 배치
+            xPercent: -50,      // 중심점 보정
+            yPercent: -50,      // 중심점 보정
+            opacity: 0,         // 처음엔 숨김
+            filter: "blur(20px)" // 멀리 있을 땐 흐리게 시작
         });
     });
 
@@ -99,58 +104,63 @@ document.addEventListener('DOMContentLoaded', () => {
         scrollTrigger: {
             trigger: '.projects',
             start: 'top top',
-            end: `+=${totalDistance}`,
-            scrub: 1,
+            // ★ 중요: 스크롤 길이를 충분히 줘서 마지막 카드가 지나갈 시간을 확보
+            end: `+=${totalDistance + 2000}`,
+            scrub: 1.5, // 숫자가 클수록 스크롤 멈췄을 때 미끄러지는(부드러운) 느낌이 강함
             pin: true,
             markers: false
         }
     });
 
-    // 4. 전체 박스를 앞으로 당겨오는 애니메이션
+    // 4. 애니메이션: 박스들이 화면을 뚫고 지나가도록 설정
     projectsTimeline.to(boxes, {
         z: (i) => {
-            return (boxes.length - i) * zGap; // 맨 뒤 박스가 맨 앞까지 오도록 계산
+            // 기존: (boxes.length - i) * zGap  --> 0에서 멈춤
+            // 수정: 마지막 카드가 화면(0)을 넘어 2000px 뒤로 날아가버리게 함
+            return (boxes.length - i) * zGap + 2000;
         },
-        ease: 'none',
+        ease: 'none', // 등속 운동 (그래야 내가 스크롤하는 만큼 움직임)
         duration: 1
     });
 
-    // 5. 개별 박스 투명도(Opacity) 제어 - "뒤에 있는 것도 보이게"
+    // 5. 개별 박스 시각 효과 (투명도 & 블러)
     boxes.forEach((box) => {
         gsap.to(box, {
             scrollTrigger: {
                 trigger: '.projects',
                 start: 'top top',
-                end: `+=${totalDistance}`,
+                end: `+=${totalDistance + 2000}`,
                 scrub: true,
                 onUpdate: () => {
                     const currentZ = gsap.getProperty(box, "z");
 
-                    // (1) 아주 멀리 있을 때 (-5000 ~ -2000): 희미하게 보임 (0.2 ~ 0.5)
-                    // (2) 다가올 때 (-2000 ~ 0): 선명해짐 (1)
-                    // (3) 지나칠 때 (0 ~ 500): 사라짐 (0)
-
-                    if (currentZ < -5000) {
-                        // 너무 멀면 안 보임
-                        gsap.set(box, { opacity: 0 });
+                    // (1) 아주 멀 때: 안 보임
+                    if (currentZ < -4000) {
+                        gsap.set(box, { opacity: 0, filter: "blur(20px)" });
                     }
-                    else if (currentZ >= -5000 && currentZ < -1000) {
-                        // 저 멀리서 다가오는 중 (점점 선명해짐)
-                        // 거리에 따라 0.1 ~ 0.8 정도로 계산
-                        const opacity = 1 - (Math.abs(currentZ) / 5000);
-                        gsap.set(box, { opacity: opacity * 0.8 });
+                    // (2) 다가오는 중: 점점 선명해짐 (-4000 ~ -500)
+                    else if (currentZ >= -4000 && currentZ < -500) {
+                        const progress = 1 - (Math.abs(currentZ) / 4000); // 0 ~ 1
+                        gsap.set(box, {
+                            opacity: progress,
+                            filter: `blur(${(1 - progress) * 20}px)` // 가까울수록 블러 제거
+                        });
                     }
-                    else if (currentZ >= -1000 && currentZ <= 200) {
-                        // 눈앞에 왔을 때 (완전 선명)
-                        gsap.set(box, { opacity: 1 });
+                    // (3) 눈 앞 (하이라이트): 완전 선명 (-500 ~ 500)
+                    else if (currentZ >= -500 && currentZ <= 500) {
+                        gsap.set(box, { opacity: 1, filter: "blur(0px)" });
                     }
+                    // (4) 지나쳐서 사라질 때: 빠르게 흐려짐 (500 ~ )
                     else {
-                        // 카메라 뒤로 지나감 (사라짐)
-                        gsap.set(box, { opacity: 0 });
+                        // 화면을 뚫고 지나가면 흐려지면서 사라짐
+                        const fadeOut = Math.max(0, 1 - (currentZ - 500) / 1000);
+                        gsap.set(box, {
+                            opacity: fadeOut,
+                            filter: `blur(${(1 - fadeOut) * 20}px)`
+                        });
                     }
                 }
             }
         });
-    });
-
+    })
 });

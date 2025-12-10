@@ -185,7 +185,7 @@ header.dark ul li a:hover {
     position: relative;
     overflow: hidden;
     /* ★ 핵심: 원근감 설정 (값이 작을수록 왜곡이 심하고 역동적) */
-    perspective: 1500px;
+    perspective: 1000px;
 }
 
 .projects_content {
