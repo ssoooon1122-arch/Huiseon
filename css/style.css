@@ -323,7 +323,7 @@ header.dark ul li a:hover {
 }
 
 .contents {
-    margin-top: 250px;
+    margin-top: 200px;
     display: flex;
     border-radius: 100%;
     width: 300vw;
@@ -359,6 +359,7 @@ header.dark ul li a:hover {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    background: pink;
 }
 
 .slide_wrap>.con>div.contain .contit {
