@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ==================== Contents 섹션 고정 ====================
     ScrollTrigger.create({
-        trigger: '.contents',
+        trigger: 'section.contents',
         start: 'top top',
         end: '+=200%',
         pin: true,
@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const boxes = gsap.utils.toArray('.box');
 
     // 1. 설정값 조절 (취향에 따라 숫자 조절 가능)
-    const zGap = 1800;        // 박스 간격 (넓을수록 깊이감 커짐)
+    const zGap = 2000;        // 박스 간격 (넓을수록 깊이감 커짐)
     const xOffset = 400;      // 좌우 벌어짐 정도
     const totalDistance = zGap * boxes.length;
 
@@ -175,12 +175,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const sWrap = document.querySelector('.slide_wrap');
     const items = gsap.utils.toArray('.slide_wrap > .con');
 
-    /*   gsap.set(items, {
-        rotation: (i) => i * (360 / items.length),
-        transformOrigin: "center center"
-      }); */
+    const angleRange = 150; // 전체 부채꼴 각도
+
     gsap.set(items, {
-        rotation: (i) => -10 + (i * 180 / (items.length - 1)), // 반원형 배치를 위해 각도를 조정
+        rotation: (i) => -angleRange / 2 + (i * angleRange / (items.length - 1)),
+        // 예: 5장일 때 -55°, -27.5°, 0°, 27.5°, 55°
         transformOrigin: "center center",
     });
 

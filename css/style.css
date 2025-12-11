@@ -316,66 +316,87 @@ header.dark ul li a:hover {
 .lookbook {
     width: 100%;
     height: 100vh;
-    margin-top: 150vh;
-    background: var(--main);
+    background: #0a0a0a;
     overflow: hidden;
     position: relative;
 }
 
-.contents {
-    margin-top: 200px;
+.lookbook_txt {
+    width: 100%;
+    text-align: center;
+    padding-top: 140px;
+    /* 위 여백 */
+    position: relative;
+    z-index: 10;
+    /* 카드보다 앞에 */
+}
+
+.lookbook_title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: #fafafa;
+    margin-bottom: 20px;
+    letter-spacing: 0.03em;
+}
+
+.lookbook_subtitle {
+    font-size: 1.2rem;
+    color: rgba(250, 250, 250, 0.6);
+    margin-bottom: 100px;
+    /* 아래 카드와 간격 */
+}
+
+.lookbook .slide_contents {
+    z-index: 1;
+}
+
+.lookbook_txt {
+    z-index: 10;
+}
+
+
+.lookbook .slide_contents {
+    margin-top: 220px;
+    /* 제목 아래 카드 내려오는 정도, 조금만 조정 */
     display: flex;
     border-radius: 100%;
     width: 300vw;
+    /* 다시 원래 값으로 */
     height: 150vw;
-    /* 반원형을 위해 높이를 절반으로 줄임 */
     top: 0;
     left: calc(50% - 150vw);
+    /* 원의 중심을 화면 중앙에 */
     position: absolute;
     will-change: transform;
     overflow: hidden;
-    /* 반원형 밖의 요소를 숨김 */
 }
 
-.contents .con {
+.lookbook .slide_contents .con {
     width: 100%;
     height: 100%;
     position: absolute;
     transform-origin: center;
-    opacity: 0;
     display: flex;
     justify-content: center;
     align-items: flex-start;
+    /* 👈 center → flex-start 로 변경 */
+    padding-top: 110px;
+    /* 👈 카드 위쪽 여백 추가 */
 }
 
-.slide_wrap>.con>div.contain {
-    z-index: 100;
-    width: 400px;
-    /* 카드 크기 조정 */
+.lookbook_card {
+    width: 360px;
     height: 450px;
-    color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(228, 140, 16, 0.523);
-    display: flex;
-    flex-direction: column;
     overflow: hidden;
-    background: pink;
+    background: #111;
+    /* 이미지 로딩 전 배경 */
 }
 
-.slide_wrap>.con>div.contain .contit {
+/* 이미지가 카드 안을 꽉 채우게 */
+.lookbook_card img {
     width: 100%;
-    height: 80px;
-    background: #333;
-    display: flex;
-    align-items: center;
-    padding-left: 20px;
-    font-size: 24px;
-    margin-bottom: 8px;
-}
-
-.slide_wrap>.con>div .sub {
-    font-size: 15px;
-    padding: 20px;
-    background: var(--sub);
     height: 100%;
+    object-fit: cover;
+    /* 비율 유지하면서 꽉 채우기 */
+    display: block;
 }
