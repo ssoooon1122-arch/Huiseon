@@ -80,8 +80,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const boxes = gsap.utils.toArray('.box');
 
     // 1. 설정값 조절 (취향에 따라 숫자 조절 가능)
-    const zGap = 1800;        // 박스 간격 (넓을수록 깊이감 커짐)
-    const xOffset = 350;      // 좌우 벌어짐 정도
+    const zGap = 1200;        // 박스 간격 (넓을수록 깊이감 커짐)
+    const xOffset = 400;      // 좌우 벌어짐 정도
     const totalDistance = zGap * boxes.length;
 
     // 2. 초기 위치 세팅
@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
             xPercent: -50,      // 중심점 보정
             yPercent: -50,      // 중심점 보정
             opacity: 0,         // 처음엔 숨김
-            filter: "blur(20px)" // 멀리 있을 땐 흐리게 시작
+            filter: "blur(10px)" // 멀리 있을 땐 흐리게 시작
         });
     });
 
@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
             start: 'top top',
             // ★ 중요: 스크롤 길이를 충분히 줘서 마지막 카드가 지나갈 시간을 확보
             end: `+=${totalDistance + 2000}`,
-            scrub: 1.5, // 숫자가 클수록 스크롤 멈췄을 때 미끄러지는(부드러운) 느낌이 강함
+            scrub: 2.0, // 숫자가 클수록 스크롤 멈췄을 때 미끄러지는(부드러운) 느낌이 강함
             pin: true,
             markers: false
         }
@@ -128,11 +128,15 @@ document.addEventListener('DOMContentLoaded', () => {
         gsap.to(box, {
             scrollTrigger: {
                 trigger: '.projects',
-                start: 'top top',
+                start: 'bottom bottom',
                 end: `+=${totalDistance + 2000}`,
                 scrub: true,
                 onUpdate: () => {
                     const currentZ = gsap.getProperty(box, "z");
+
+                    // ★ 이 구간에선 버튼/링크 클릭 허용
+                    const isActive = currentZ >= -10000 && currentZ <= 5000;
+                    gsap.set(box, { pointerEvents: isActive ? "auto" : "none" });
 
                     // (1) 아주 멀 때: 안 보임
                     if (currentZ < -4000) {
@@ -143,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const progress = 1 - (Math.abs(currentZ) / 4000); // 0 ~ 1
                         gsap.set(box, {
                             opacity: progress,
-                            filter: `blur(${(1 - progress) * 20}px)` // 가까울수록 블러 제거
+                            filter: `blur(${(1 - progress) * 10}px)` // 가까울수록 블러 제거
                         });
                     }
                     // (3) 눈 앞 (하이라이트): 완전 선명 (-500 ~ 500)
@@ -156,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const fadeOut = Math.max(0, 1 - (currentZ - 500) / 1000);
                         gsap.set(box, {
                             opacity: fadeOut,
-                            filter: `blur(${(1 - fadeOut) * 20}px)`
+                            filter: `blur(${(1 - fadeOut) * 10}px)`
                         });
                     }
                 }

@@ -242,6 +242,8 @@ header.dark ul li a:hover {
     gap: 40px;
     align-items: center;
     box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+
+    pointer-events: auto;
 }
 
 /* 기존 내부 스타일 유지 */
