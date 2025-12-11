@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const boxes = gsap.utils.toArray('.box');
 
     // 1. 설정값 조절 (취향에 따라 숫자 조절 가능)
-    const zGap = 1200;        // 박스 간격 (넓을수록 깊이감 커짐)
+    const zGap = 1800;        // 박스 간격 (넓을수록 깊이감 커짐)
     const xOffset = 400;      // 좌우 벌어짐 정도
     const totalDistance = zGap * boxes.length;
 
@@ -167,4 +167,53 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     })
+
+
+
+    /* aa */
+    // GSAP ScrollTrigger 애니메이션 설정 - 원형 회전 애니메이션 추가
+    const sWrap = document.querySelector('.slide_wrap');
+    const items = gsap.utils.toArray('.slide_wrap > .con');
+
+    /*   gsap.set(items, {
+        rotation: (i) => i * (360 / items.length),
+        transformOrigin: "center center"
+      }); */
+    gsap.set(items, {
+        rotation: (i) => -10 + (i * 180 / (items.length - 1)), // 반원형 배치를 위해 각도를 조정
+        transformOrigin: "center center",
+    });
+
+
+
+    gsap.to(sWrap, {
+        rotation: -180, // 반원형 회전
+        ease: "none",
+        scrollTrigger: {
+            trigger: '.horizontalSlide',
+            start: 'top top',
+            end: () => '+=' + (items.length * 450), // 아이템 크기와 수에 맞춰 종료점 계산
+            pin: true,
+            scrub: 1,
+            invalidateOnRefresh: true,
+            onEnter: () => { }
+            /*  onLeave: () => $('.sevice_wrap').removeClass('on'), */
+        }
+    });
+
+    items.forEach((item, i) => {
+        gsap.fromTo(item, {
+            /*  opacity: 0, */
+        },
+            {
+                opacity: 1,
+                scrollTrigger: {
+                    trigger: '.horizontalSlide',
+                    start: () => 'top top+=' + (i * 450), // 각 아이템이 겹치지 않도록 스크롤 간격 조정
+                    end: () => 'top top+=' + ((i + 1) * 450),
+                    scrub: true,
+                },
+            });
+    });
+
 });
