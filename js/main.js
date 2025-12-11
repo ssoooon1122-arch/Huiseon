@@ -186,87 +186,139 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const total = cards.length;
         const degree = 360 / total;
-        let animationPlayed = false; // 애니메이션 중복 방지
         let draggableInstance = null;
+        let mainTimeline = null;
 
-        // 1) 초기 상태 세팅 (화면 밖에 숨김)
-        cards.forEach((card, index) => {
-            gsap.set(card, {
-                x: index % 2
-                    ? window.innerWidth + card.clientWidth * 4
-                    : -window.innerWidth - card.clientWidth * 4,
-                y: window.innerHeight - card.clientHeight,
-                rotation: index % 2 ? 200 : -200,
-                scale: 4,
-                opacity: 0, // 처음엔 안 보이게
+        // 초기 상태로 리셋하는 함수
+        function resetCards() {
+            cards.forEach((card, index) => {
+                gsap.set(card, {
+                    x: index % 2
+                        ? window.innerWidth + card.clientWidth * 4
+                        : -window.innerWidth - card.clientWidth * 4,
+                    y: window.innerHeight - card.clientHeight,
+                    rotation: index % 2 ? 200 : -200,
+                    scale: 4,
+                    opacity: 0,
+                    transformOrigin: 'center center',
+                });
             });
-        });
 
-        // 2) ScrollTrigger로 룩북 섹션 진입 시 애니메이션 실행
+            // 드래그 인스턴스가 있으면 회전 초기화
+            if (draggableInstance) {
+                gsap.set('.lookbook_items', { rotation: 0 });
+            }
+        }
+
+        // 애니메이션 실행 함수
+        function playAnimation() {
+            // 이전 타임라인이 있으면 중지하고 제거
+            if (mainTimeline) {
+                mainTimeline.kill();
+            }
+
+            mainTimeline = gsap.timeline({
+                onComplete: () => {
+                    // 애니메이션 완료 후 드래그 활성화
+                    if (!draggableInstance) {
+                        initDraggable();
+                    } else {
+                        // 이미 있으면 활성화
+                        draggableInstance.enable();
+                    }
+                }
+            });
+
+            cards.forEach((card, index) => {
+                const sign = Math.floor((index / 2) % 2) ? 1 : -1;
+                const value = Math.floor((index + 4) / 4) * 4;
+                const rotation = index > total - 3 ? 0 : sign * value;
+
+                // 날아오는 애니메이션
+                mainTimeline.to(
+                    card,
+                    {
+                        x: 0,
+                        y: 0,
+                        rotation: rotation,
+                        scale: 0.5,
+                        opacity: 1,
+                        ease: 'power4.out',
+                        duration: 1,
+                        delay: 0.15 * Math.floor(index / 2),
+                    },
+                    0
+                );
+
+                // 스케일 정상화
+                const rotationAngle = index * degree;
+                mainTimeline.to(
+                    card,
+                    {
+                        scale: 1,
+                        duration: 0,
+                    },
+                    0.15 * (total / 2 - 1) + 1
+                );
+
+                // 원형 배치로 전환
+                mainTimeline.to(
+                    card,
+                    {
+                        transformOrigin: 'center 200vh',
+                        rotation:
+                            index > total / 2
+                                ? -degree * (total - index)
+                                : rotationAngle,
+                        duration: 1,
+                        ease: 'power1.out',
+                    },
+                    0.15 * (total / 2 - 1) + 1
+                );
+            });
+        }
+
+        // 1) 초기 상태 세팅
+        resetCards();
+
+        // 2) ScrollTrigger로 룩북 섹션 진입/퇴장 감지
         ScrollTrigger.create({
             trigger: '.lookbook',
-            start: 'top 80%', // 룩북이 화면의 80% 지점에 도달하면
-            once: true, // 한 번만 실행
+            start: 'top 40%',
+            end: 'bottom 20%',
+
             onEnter: () => {
-                if (animationPlayed) return;
-                animationPlayed = true;
+                // 섹션에 진입할 때마다 애니메이션 재생
+                playAnimation();
+            },
 
-                const tl = gsap.timeline({
-                    onComplete: () => {
-                        // 애니메이션 완료 후 드래그 활성화
-                        if (!draggableInstance) {
-                            initDraggable();
-                        }
-                    }
-                });
+            onLeave: () => {
+                // 섹션을 벗어나면 리셋 (다음을 위해)
+                if (mainTimeline) {
+                    mainTimeline.kill();
+                }
+                if (draggableInstance) {
+                    draggableInstance.disable();
+                }
+                // 🎯 여기서 리셋!
+                resetCards();
+            },
 
-                cards.forEach((card, index) => {
-                    const sign = Math.floor((index / 2) % 2) ? 1 : -1;
-                    const value = Math.floor((index + 4) / 4) * 4;
-                    const rotation = index > total - 3 ? 0 : sign * value;
+            onEnterBack: () => {
+                // 🎯 이미 리셋되어 있으니 바로 재생
+                playAnimation();
+            },
 
-                    // 날아오는 애니메이션
-                    tl.to(
-                        card,
-                        {
-                            x: 0,
-                            y: 0,
-                            rotation: rotation,
-                            scale: 0.5,
-                            opacity: 1,
-                            ease: 'power4.out',
-                            duration: 1,
-                            delay: 0.15 * Math.floor(index / 2),
-                        },
-                        0
-                    );
-
-                    // 스케일 정상화
-                    const rotationAngle = index * degree;
-                    tl.to(
-                        card,
-                        {
-                            scale: 1,
-                            duration: 0,
-                        },
-                        0.15 * (total / 2 - 1) + 1
-                    );
-
-                    // 원형 배치로 전환
-                    tl.to(
-                        card,
-                        {
-                            transformOrigin: 'center 200vh',
-                            rotation:
-                                index > total / 2
-                                    ? -degree * (total - index)
-                                    : rotationAngle,
-                            duration: 1,
-                            ease: 'power1.out',
-                        },
-                        0.15 * (total / 2 - 1) + 1
-                    );
-                });
+            onLeaveBack: () => {
+                // 위로 스크롤해서 벗어나면 리셋
+                if (mainTimeline) {
+                    mainTimeline.kill();
+                }
+                if (draggableInstance) {
+                    draggableInstance.disable();
+                }
+                // 🎯 여기서도 리셋!
+                resetCards();
             },
         });
 
@@ -316,7 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }
                 },
-            })[0]; // Draggable.create는 배열을 반환하므로 [0]으로 인스턴스 저장
+            })[0];
         }
     });
 
