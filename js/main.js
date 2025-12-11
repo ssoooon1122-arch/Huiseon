@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. 초기 위치 세팅
     boxes.forEach((box, i) => {
         // 지그재그 배치: 짝수는 오른쪽(+), 홀수는 왼쪽(-)
-        const xPosition = (i % 2 === 0) ? xOffset : -xOffset;
+        const xPosition = (i % 2 === 0) ? -xOffset : xOffset;
 
         gsap.set(box, {
             z: -i * zGap,       // 뒤쪽 깊숙이 배치

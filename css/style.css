@@ -203,7 +203,7 @@ header.dark ul li a:hover {
     left: 50%;
     transform: translateX(-50%);
     text-align: center;
-    z-index: 10;
+    z-index: 100s;
     width: 100%;
     pointer-events: none;
     /* 클릭 방지 */
@@ -231,7 +231,7 @@ header.dark ul li a:hover {
 
     /* 화면 정중앙 기준점 잡기 */
     position: absolute;
-    top: 50%;
+    top: 60%;
     left: 50%;
 
     /* 중심점만 잡아두고, 나머지는 JS가 움직입니다 */
