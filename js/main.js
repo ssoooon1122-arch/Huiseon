@@ -170,49 +170,154 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-    /* aa */
-    // GSAP ScrollTrigger 애니메이션 설정 - 원형 회전 애니메이션 추가
-    const sWrap = document.querySelector('.slide_wrap');
-    const items = gsap.utils.toArray('.slide_wrap > .con');
-
-    const angleRange = 150; // 전체 부채꼴 각도
-
-    gsap.set(items, {
-        rotation: (i) => -angleRange / 2 + (i * angleRange / (items.length - 1)),
-        // 예: 5장일 때 -55°, -27.5°, 0°, 27.5°, 55°
-        transformOrigin: "center center",
-    });
-
-
-
-    gsap.to(sWrap, {
-        rotation: -180, // 반원형 회전
-        ease: "none",
-        scrollTrigger: {
-            trigger: '.horizontalSlide',
-            start: 'top top',
-            end: () => '+=' + (items.length * 450), // 아이템 크기와 수에 맞춰 종료점 계산
-            pin: true,
-            scrub: 1,
-            invalidateOnRefresh: true,
-            onEnter: () => { }
-            /*  onLeave: () => $('.sevice_wrap').removeClass('on'), */
+    // ==================== LOOKBOOK Draggable 코드 ====================
+    window.addEventListener('load', () => {
+        // GSAP / Draggable 로드 체크
+        if (typeof gsap === 'undefined' || typeof Draggable === 'undefined') {
+            console.error('GSAP 또는 Draggable 플러그인을 로드할 수 없습니다.');
+            return;
         }
-    });
 
-    items.forEach((item, i) => {
-        gsap.fromTo(item, {
-            /*  opacity: 0, */
-        },
-            {
-                opacity: 1,
-                scrollTrigger: {
-                    trigger: '.horizontalSlide',
-                    start: () => 'top top+=' + (i * 450), // 각 아이템이 겹치지 않도록 스크롤 간격 조정
-                    end: () => 'top top+=' + ((i + 1) * 450),
-                    scrub: true,
-                },
+        const cards = gsap.utils.toArray('.lookbook_item');
+        if (!cards.length) {
+            console.error('.lookbook_item 요소를 찾을 수 없습니다.');
+            return;
+        }
+
+        const total = cards.length;
+        const degree = 360 / total;
+        let animationPlayed = false; // 애니메이션 중복 방지
+        let draggableInstance = null;
+
+        // 1) 초기 상태 세팅 (화면 밖에 숨김)
+        cards.forEach((card, index) => {
+            gsap.set(card, {
+                x: index % 2
+                    ? window.innerWidth + card.clientWidth * 4
+                    : -window.innerWidth - card.clientWidth * 4,
+                y: window.innerHeight - card.clientHeight,
+                rotation: index % 2 ? 200 : -200,
+                scale: 4,
+                opacity: 0, // 처음엔 안 보이게
             });
+        });
+
+        // 2) ScrollTrigger로 룩북 섹션 진입 시 애니메이션 실행
+        ScrollTrigger.create({
+            trigger: '.lookbook',
+            start: 'top 80%', // 룩북이 화면의 80% 지점에 도달하면
+            once: true, // 한 번만 실행
+            onEnter: () => {
+                if (animationPlayed) return;
+                animationPlayed = true;
+
+                const tl = gsap.timeline({
+                    onComplete: () => {
+                        // 애니메이션 완료 후 드래그 활성화
+                        if (!draggableInstance) {
+                            initDraggable();
+                        }
+                    }
+                });
+
+                cards.forEach((card, index) => {
+                    const sign = Math.floor((index / 2) % 2) ? 1 : -1;
+                    const value = Math.floor((index + 4) / 4) * 4;
+                    const rotation = index > total - 3 ? 0 : sign * value;
+
+                    // 날아오는 애니메이션
+                    tl.to(
+                        card,
+                        {
+                            x: 0,
+                            y: 0,
+                            rotation: rotation,
+                            scale: 0.5,
+                            opacity: 1,
+                            ease: 'power4.out',
+                            duration: 1,
+                            delay: 0.15 * Math.floor(index / 2),
+                        },
+                        0
+                    );
+
+                    // 스케일 정상화
+                    const rotationAngle = index * degree;
+                    tl.to(
+                        card,
+                        {
+                            scale: 1,
+                            duration: 0,
+                        },
+                        0.15 * (total / 2 - 1) + 1
+                    );
+
+                    // 원형 배치로 전환
+                    tl.to(
+                        card,
+                        {
+                            transformOrigin: 'center 200vh',
+                            rotation:
+                                index > total / 2
+                                    ? -degree * (total - index)
+                                    : rotationAngle,
+                            duration: 1,
+                            ease: 'power1.out',
+                        },
+                        0.15 * (total / 2 - 1) + 1
+                    );
+                });
+            },
+        });
+
+        // 3) 드래그 기능 초기화 함수
+        function initDraggable() {
+            let startRotation = 0;
+
+            draggableInstance = Draggable.create('.lookbook_items', {
+                type: 'rotation',
+
+                onDragStart: function () {
+                    startRotation = this.rotation;
+                },
+
+                onDragEnd: function () {
+                    const currentRotation = this.rotation;
+                    const offset = Math.abs(currentRotation - startRotation);
+
+                    // 가장 가까운 카드 위치로 스냅
+                    if (currentRotation > startRotation) {
+                        if (currentRotation - startRotation < degree / 2) {
+                            gsap.to('.lookbook_items', {
+                                rotation: `-=${offset}`,
+                                duration: 0.3,
+                                ease: 'power2.out'
+                            });
+                        } else {
+                            gsap.to('.lookbook_items', {
+                                rotation: `+=${degree - offset}`,
+                                duration: 0.3,
+                                ease: 'power2.out'
+                            });
+                        }
+                    } else {
+                        if (Math.abs(currentRotation - startRotation) < degree / 2) {
+                            gsap.to('.lookbook_items', {
+                                rotation: `+=${offset}`,
+                                duration: 0.3,
+                                ease: 'power2.out'
+                            });
+                        } else {
+                            gsap.to('.lookbook_items', {
+                                rotation: `-=${degree - offset}`,
+                                duration: 0.3,
+                                ease: 'power2.out'
+                            });
+                        }
+                    }
+                },
+            })[0]; // Draggable.create는 배열을 반환하므로 [0]으로 인스턴스 저장
+        }
     });
 
 });
