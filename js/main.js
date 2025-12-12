@@ -219,6 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             mainTimeline = gsap.timeline({
                 onComplete: () => {
+                    unlockScroll(lenis);
                     // 애니메이션 완료 후 드래그 활성화
                     if (!draggableInstance) {
                         initDraggable();
@@ -278,8 +279,22 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
+
+
+
+        function lockScroll(lenis) {
+            lenis.stop();
+        }
+
+        function unlockScroll(lenis) {
+            lenis.start();
+        }
+
+
+
+
         // 1) 초기 상태 세팅
-        resetCards();
+        //resetCards();
 
         // 2) ScrollTrigger로 룩북 섹션 진입/퇴장 감지
         ScrollTrigger.create({
@@ -290,40 +305,31 @@ document.addEventListener('DOMContentLoaded', () => {
             pinSpacing: true,              // ⭐ 다시 true로
             anticipatePin: 1,              // ⭐ 추가: pin 부드럽게
             markers: false,
-
             onEnter: () => {
-                // 섹션에 진입할 때마다 애니메이션 재생
-                playAnimation();
-            },
 
-            onLeave: () => {
-                // 섹션을 벗어나면 리셋 (다음을 위해)
-                if (mainTimeline) {
-                    mainTimeline.kill();
-                }
-                if (draggableInstance) {
-                    draggableInstance.disable();
-                }
-                // 🎯 여기서 리셋!
                 resetCards();
+                playAnimation();
+                setTimeout(() => {
+                    lockScroll(lenis);
+                }, 100); // 약간의 지연 후 실행
             },
-
             onEnterBack: () => {
-                // 🎯 이미 리셋되어 있으니 바로 재생
+                resetCards();
                 playAnimation();
+                setTimeout(() => {
+                    lockScroll(lenis);
+                }, 100); // 약간의 지연 후 실행
             },
-
-            onLeaveBack: () => {
-                // 위로 스크롤해서 벗어나면 리셋
-                if (mainTimeline) {
-                    mainTimeline.kill();
-                }
-                if (draggableInstance) {
-                    draggableInstance.disable();
-                }
-                // 🎯 여기서도 리셋!
+            onLeave: () => {
+                if (mainTimeline) mainTimeline.kill();
+                if (draggableInstance) draggableInstance.disable();
                 resetCards();
             },
+            onLeaveBack: () => {
+                if (mainTimeline) mainTimeline.kill();
+                if (draggableInstance) draggableInstance.disable();
+                resetCards();
+            }
         });
 
         // 3) 드래그 기능 초기화 함수
@@ -382,7 +388,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (contactSection) {
         ScrollTrigger.create({
             trigger: '.contact',
-            start: 'top bottom',
+            start: 'top top',
             markers: false,
 
             onEnter: () => {
