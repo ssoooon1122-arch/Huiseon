@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // ==================== LOOKBOOK Draggable 코드 ====================
+    // ==================== LOOKBOOK Draggable 코드 (수정본) ====================
     window.addEventListener('load', () => {
         if (typeof gsap === 'undefined' || typeof Draggable === 'undefined') {
             console.error('GSAP 또는 Draggable 플러그인을 로드할 수 없습니다.');
@@ -165,6 +165,15 @@ document.addEventListener('DOMContentLoaded', () => {
         let draggableInstance = null;
         let mainTimeline = null;
 
+        // Lenis 인스턴스가 전역으로 'lenis' 변수에 존재한다고 가정
+        function lockScroll() {
+            if (typeof lenis !== 'undefined') lenis.stop();
+        }
+
+        function unlockScroll() {
+            if (typeof lenis !== 'undefined') lenis.start();
+        }
+
         function resetCards() {
             cards.forEach((card, index) => {
                 gsap.set(card, {
@@ -180,16 +189,9 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (draggableInstance) {
+                // reset 시 rotation도 0으로 초기화
                 gsap.set('.lookbook_items', { rotation: 0 });
             }
-        }
-
-        function lockScroll(lenisInstance) {
-            lenisInstance.stop();
-        }
-
-        function unlockScroll(lenisInstance) {
-            lenisInstance.start();
         }
 
         function playAnimation() {
@@ -199,7 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             mainTimeline = gsap.timeline({
                 onComplete: () => {
-                    unlockScroll(lenis);
+                    unlockScroll();
                     if (!draggableInstance) {
                         initDraggable();
                     } else {
@@ -211,14 +213,15 @@ document.addEventListener('DOMContentLoaded', () => {
             cards.forEach((card, index) => {
                 const sign = Math.floor((index / 2) % 2) ? 1 : -1;
                 const value = Math.floor((index + 4) / 4) * 4;
-                const rotation = index > total - 3 ? 0 : sign * value;
+                const initialRotation = index > total - 3 ? 0 : sign * value;
 
+                // 1. 초기 위치에서 가운데로 모이는 애니메이션
                 mainTimeline.to(
                     card,
                     {
                         x: 0,
                         y: 0,
-                        rotation: rotation,
+                        rotation: initialRotation,
                         scale: 0.5,
                         opacity: 1,
                         ease: 'power4.out',
@@ -230,6 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const rotationAngle = index * degree;
 
+                // 2. 카드들이 3D 서클 형태로 회전하는 최종 위치로 이동
                 mainTimeline.to(
                     card,
                     {
@@ -239,14 +243,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     0.15 * (total / 2 - 1) + 1
                 );
 
+                // CSS에서 transform-origin: center 150vh; 로 변경했으므로 해당 값 유지
                 mainTimeline.to(
                     card,
                     {
                         transformOrigin: 'center 150vh',
-                        rotation:
-                            index > total / 2
-                                ? -degree * (total - index)
-                                : rotationAngle,
+                        rotation: rotationAngle,
                         duration: 1,
                         ease: 'power1.out',
                     },
@@ -255,9 +257,11 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
+        // ScrollTrigger로 룩북 섹션 제어 (start 지점 및 onLeave 스크롤 해제 로직 수정)
         ScrollTrigger.create({
             trigger: '.lookbook',
-            start: 'top top',
+            // start: 'top top', // GNB 연결 후 충돌 방지를 위해 start 지점을 조정해 볼 수 있습니다.
+            start: 'top 10%',
             end: '+=150%',
             pin: true,
             pinSpacing: true,
@@ -267,76 +271,56 @@ document.addEventListener('DOMContentLoaded', () => {
                 resetCards();
                 playAnimation();
                 setTimeout(() => {
-                    lockScroll(lenis);
+                    lockScroll();
                 }, 100);
             },
             onEnterBack: () => {
                 resetCards();
                 playAnimation();
                 setTimeout(() => {
-                    lockScroll(lenis);
+                    lockScroll();
                 }, 100);
             },
             onLeave: () => {
                 if (mainTimeline) mainTimeline.kill();
                 if (draggableInstance) draggableInstance.disable();
                 resetCards();
+                unlockScroll(); // ★ 섹션 이탈 시 스크롤 잠금 해제
             },
             onLeaveBack: () => {
                 if (mainTimeline) mainTimeline.kill();
                 if (draggableInstance) draggableInstance.disable();
                 resetCards();
+                unlockScroll(); // ★ 섹션 이탈 시 스크롤 잠금 해제
             },
         });
 
+        // 드래그 기능 (GSAP Snap 사용으로 360도 무한 반복 안정화)
         function initDraggable() {
-            let startRotation = 0;
+            // degree 간격으로 스냅 포인트를 생성하고 360도 범위 내로 유지 (선택 사항)
+            const snapPoints = gsap.utils.pipe(
+                gsap.utils.snap(degree),
+                (rotation) => rotation % 360 // 360도 이상 회전 시에도 스냅 로직은 유지
+            );
 
             draggableInstance = Draggable.create('.lookbook_items', {
                 type: 'rotation',
-
-                onDragStart: function () {
-                    startRotation = this.rotation;
+                snap: {
+                    rotation: snapPoints
                 },
-
+                // inertia: true, // 관성을 추가하여 부드러움을 높일 수 있음 (선택 사항)
+                onDragStart: function () {
+                    // 드래그 시작 시 관성 제거 (필요하다면)
+                    gsap.killTweensOf('.lookbook_items');
+                },
                 onDragEnd: function () {
-                    const currentRotation = this.rotation;
-                    const offset = Math.abs(currentRotation - startRotation);
-
-                    if (currentRotation > startRotation) {
-                        if (currentRotation - startRotation < degree / 2) {
-                            gsap.to('.lookbook_items', {
-                                rotation: `-=${offset}`,
-                                duration: 0.3,
-                                ease: 'power2.out',
-                            });
-                        } else {
-                            gsap.to('.lookbook_items', {
-                                rotation: `+=${degree - offset}`,
-                                duration: 0.3,
-                                ease: 'power2.out',
-                            });
-                        }
-                    } else {
-                        if (Math.abs(currentRotation - startRotation) < degree / 2) {
-                            gsap.to('.lookbook_items', {
-                                rotation: `+=${offset}`,
-                                duration: 0.3,
-                                ease: 'power2.out',
-                            });
-                        } else {
-                            gsap.to('.lookbook_items', {
-                                rotation: `-=${degree - offset}`,
-                                duration: 0.3,
-                                ease: 'power2.out',
-                            });
-                        }
-                    }
+                    // GSAP의 snap이 드래그 종료 시 자동으로 스냅 애니메이션을 처리합니다.
                 },
             })[0];
         }
     });
 
+    // (나머지 CONTACT 섹션 및 네비게이션 스크롤 코드는 유지됩니다.)
     // ==================== CONTACT 섹션 텍스트/이미지 등장 ====================
     const contactSection = document.querySelector('.contact');
 
