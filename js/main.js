@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     // ==================== GSAP 플러그인 ====================
-    gsap.registerPlugin(ScrollTrigger);
+    gsap.registerPlugin(ScrollTrigger, Draggable); // Draggable 플러그인도 등록해야 합니다.
 
-    // ==================== Lenis ====================
+    // ==================== Lenis (Smooth Scroll) ====================
     const lenis = new Lenis({
         duration: 0.8,
         easing: (t) => t,
@@ -29,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const observer = new IntersectionObserver(
         (entries) => {
             entries.forEach((entry) => {
+                // about_me 섹션이 뷰포트에 30% 이상 들어오면 dark 모드 활성화
                 if (entry.isIntersecting) header.classList.add('dark');
                 else header.classList.remove('dark');
             });
@@ -323,14 +324,14 @@ document.addEventListener('DOMContentLoaded', () => {
             trigger: '.contact',
             start: 'top top',
             markers: false,
+            // GNB에서 직접 처리하므로 여기는 일반 스크롤링 시에만 작동하도록 유지
             onEnter: () => contactSection.classList.add('is-visible'),
             onEnterBack: () => contactSection.classList.add('is-visible'),
         });
     }
 
     // ==================== NAV (🔥 pin 섹션에서 절대 안 깨지는 방식) ====================
-    // ✅ Lenis scrollTo로 점프하면 pin 보정 꼬여서 룩북부터 깨짐.
-    // ✅ 그래서 "해당 섹션의 ScrollTrigger start 지점"으로 순간 이동 + refresh가 정답.
+    // ✅ Lenis scrollTo 대신 window.scrollTo + ScrollTrigger.refresh가 정답
     const navMap = {
         intro: 'introTrigger',
         about: 'aboutTrigger',
@@ -354,8 +355,13 @@ document.addEventListener('DOMContentLoaded', () => {
             // 우선 스크롤 허용 상태로 만들고 이동
             lenis.start();
 
-            // ✅ ScrollTrigger 기준 위치로 이동(핀 보정 포함)
+            // ✅ ScrollTrigger 기준 위치로 이동(핀 보정 포함). +1을 주어 onEnter가 발동될 위치로 이동
             window.scrollTo(0, st.start + 1);
+
+            // **✅ 핵심 수정:** Contact 섹션으로 점프 시, 클래스를 강제로 추가하여 노출 보장
+            if (targetId === 'contact' && contactSection) {
+                contactSection.classList.add('is-visible');
+            }
 
             // ✅ 이동 직후 보정 필수
             ScrollTrigger.refresh(true);
