@@ -17,8 +17,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     requestAnimationFrame(raf);
 
+    // ==================== Header Dark Mode (About 섹션 진입 시 색 바뀌는 부분) ====================
     const header = document.querySelector('header');
-    const contentsSection = document.querySelector('.contents');
+    const aboutSection = document.querySelector('.about_me'); // ✅ .contents → .about_me
 
     const observer = new IntersectionObserver(
         (entries) => {
@@ -33,7 +34,10 @@ document.addEventListener('DOMContentLoaded', () => {
         { threshold: 0.3 }
     );
 
-    observer.observe(contentsSection);
+    // ✅ 섹션이 실제 있을 때만 observe 해서 에러 방지
+    if (aboutSection) {
+        observer.observe(aboutSection);
+    }
 
     // ==================== Intro 스크롤 애니메이션 ====================
     const introTimeline = gsap.timeline({
@@ -61,69 +65,59 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 0)
         .to({}, { duration: 2 });
 
-    // ==================== Contents 섹션 고정 ====================
+    // ==================== ABOUT_ME 섹션 고정 ====================
     ScrollTrigger.create({
-        trigger: 'section.contents',
+        trigger: '.about_me',
         start: 'top top',
         end: '+=150%',
         pin: true,
         pinSpacing: true,
         markers: false,
     });
-    // main.js - Projects 섹션 부분 (전체 교체)
 
     // ==============================================
     // ★ PROJECTS 3D Tunnel & Drop Effect ★
     // ==============================================
-
     const projectsSection = document.querySelector('.projects');
     const boxes = gsap.utils.toArray('.box');
 
-    // 1. 설정값 조절 (취향에 따라 숫자 조절 가능)
-    const zGap = 2000;        // 박스 간격 (넓을수록 깊이감 커짐)
-    const xOffset = 400;      // 좌우 벌어짐 정도
+    const zGap = 2000;       // 카드 간 z 간격
+    const xOffset = 400;     // 좌우 벌어짐
     const totalDistance = zGap * boxes.length;
 
-    // 2. 초기 위치 세팅
+    // 초기 위치 세팅
     boxes.forEach((box, i) => {
-        // 지그재그 배치: 짝수는 오른쪽(+), 홀수는 왼쪽(-)
         const xPosition = (i % 2 === 0) ? -xOffset : xOffset;
 
         gsap.set(box, {
-            z: -i * zGap,       // 뒤쪽 깊숙이 배치
-            x: xPosition,       // 좌우 배치
-            xPercent: -50,      // 중심점 보정
-            yPercent: -50,      // 중심점 보정
-            opacity: 0,         // 처음엔 숨김
-            filter: "blur(10px)" // 멀리 있을 땐 흐리게 시작
+            z: -i * zGap,
+            x: xPosition,
+            xPercent: -50,
+            yPercent: -50,
+            opacity: 0,
+            filter: 'blur(10px)',
         });
     });
 
-    // 3. 메인 스크롤 타임라인
+    // 메인 스크롤 타임라인
     const projectsTimeline = gsap.timeline({
         scrollTrigger: {
             trigger: '.projects',
             start: 'top top',
-            // ★ 중요: 스크롤 길이를 충분히 줘서 마지막 카드가 지나갈 시간을 확보
             end: `+=${totalDistance + 100}`,
-            scrub: 2.0, // 숫자가 클수록 스크롤 멈췄을 때 미끄러지는(부드러운) 느낌이 강함
+            scrub: 2.0,
             pin: true,
-            markers: false
+            markers: false,
         }
     });
 
-    // 4. 애니메이션: 박스들이 화면을 뚫고 지나가도록 설정
     projectsTimeline.to(boxes, {
-        z: (i) => {
-            // 기존: (boxes.length - i) * zGap  --> 0에서 멈춤
-            // 수정: 마지막 카드가 화면(0)을 넘어 2000px 뒤로 날아가버리게 함
-            return (boxes.length - i) * zGap + 2000;
-        },
-        ease: 'none', // 등속 운동 (그래야 내가 스크롤하는 만큼 움직임)
-        duration: 1
+        z: (i) => (boxes.length - i) * zGap + 2000,
+        ease: 'none',
+        duration: 1,
     });
 
-    // 5. 개별 박스 시각 효과 (투명도 & 블러)
+    // 개별 박스 시각 효과
     boxes.forEach((box) => {
         gsap.to(box, {
             scrollTrigger: {
@@ -132,47 +126,35 @@ document.addEventListener('DOMContentLoaded', () => {
                 end: `+=${totalDistance + 2000}`,
                 scrub: true,
                 onUpdate: () => {
-                    const currentZ = gsap.getProperty(box, "z");
+                    const currentZ = gsap.getProperty(box, 'z');
 
-                    // ★ 이 구간에선 버튼/링크 클릭 허용
                     const isActive = currentZ >= -10000 && currentZ <= 5000;
-                    gsap.set(box, { pointerEvents: isActive ? "auto" : "none" });
+                    gsap.set(box, { pointerEvents: isActive ? 'auto' : 'none' });
 
-                    // (1) 아주 멀 때: 안 보임
                     if (currentZ < -4000) {
-                        gsap.set(box, { opacity: 0, filter: "blur(20px)" });
-                    }
-                    // (2) 다가오는 중: 점점 선명해짐 (-4000 ~ -500)
-                    else if (currentZ >= -4000 && currentZ < -500) {
-                        const progress = 1 - (Math.abs(currentZ) / 4000); // 0 ~ 1
+                        gsap.set(box, { opacity: 0, filter: 'blur(20px)' });
+                    } else if (currentZ >= -4000 && currentZ < -500) {
+                        const progress = 1 - (Math.abs(currentZ) / 4000);
                         gsap.set(box, {
                             opacity: progress,
-                            filter: `blur(${(1 - progress) * 10}px)` // 가까울수록 블러 제거
+                            filter: `blur(${(1 - progress) * 10}px)`,
                         });
-                    }
-                    // (3) 눈 앞 (하이라이트): 완전 선명 (-500 ~ 500)
-                    else if (currentZ >= -500 && currentZ <= 500) {
-                        gsap.set(box, { opacity: 1, filter: "blur(0px)" });
-                    }
-                    // (4) 지나쳐서 사라질 때: 빠르게 흐려짐 (500 ~ )
-                    else {
-                        // 화면을 뚫고 지나가면 흐려지면서 사라짐
+                    } else if (currentZ >= -500 && currentZ <= 500) {
+                        gsap.set(box, { opacity: 1, filter: 'blur(0px)' });
+                    } else {
                         const fadeOut = Math.max(0, 1 - (currentZ - 500) / 1000);
                         gsap.set(box, {
                             opacity: fadeOut,
-                            filter: `blur(${(1 - fadeOut) * 10}px)`
+                            filter: `blur(${(1 - fadeOut) * 10}px)`,
                         });
                     }
-                }
-            }
+                },
+            },
         });
-    })
-
-
+    });
 
     // ==================== LOOKBOOK Draggable 코드 ====================
     window.addEventListener('load', () => {
-        // GSAP / Draggable 로드 체크
         if (typeof gsap === 'undefined' || typeof Draggable === 'undefined') {
             console.error('GSAP 또는 Draggable 플러그인을 로드할 수 없습니다.');
             return;
@@ -189,7 +171,6 @@ document.addEventListener('DOMContentLoaded', () => {
         let draggableInstance = null;
         let mainTimeline = null;
 
-        // 초기 상태로 리셋하는 함수
         function resetCards() {
             cards.forEach((card, index) => {
                 gsap.set(card, {
@@ -204,15 +185,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             });
 
-            // 드래그 인스턴스가 있으면 회전 초기화
             if (draggableInstance) {
                 gsap.set('.lookbook_items', { rotation: 0 });
             }
         }
 
-        // 애니메이션 실행 함수
+        function lockScroll(lenisInstance) {
+            lenisInstance.stop();
+        }
+
+        function unlockScroll(lenisInstance) {
+            lenisInstance.start();
+        }
+
         function playAnimation() {
-            // 이전 타임라인이 있으면 중지하고 제거
             if (mainTimeline) {
                 mainTimeline.kill();
             }
@@ -220,14 +206,12 @@ document.addEventListener('DOMContentLoaded', () => {
             mainTimeline = gsap.timeline({
                 onComplete: () => {
                     unlockScroll(lenis);
-                    // 애니메이션 완료 후 드래그 활성화
                     if (!draggableInstance) {
                         initDraggable();
                     } else {
-                        // 이미 있으면 활성화
                         draggableInstance.enable();
                     }
-                }
+                },
             });
 
             cards.forEach((card, index) => {
@@ -235,7 +219,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const value = Math.floor((index + 4) / 4) * 4;
                 const rotation = index > total - 3 ? 0 : sign * value;
 
-                // 날아오는 애니메이션
                 mainTimeline.to(
                     card,
                     {
@@ -251,8 +234,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     0
                 );
 
-                // 스케일 정상화
                 const rotationAngle = index * degree;
+
                 mainTimeline.to(
                     card,
                     {
@@ -262,7 +245,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     0.15 * (total / 2 - 1) + 1
                 );
 
-                // 원형 배치로 전환
                 mainTimeline.to(
                     card,
                     {
@@ -279,46 +261,28 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-
-
-
-        function lockScroll(lenis) {
-            lenis.stop();
-        }
-
-        function unlockScroll(lenis) {
-            lenis.start();
-        }
-
-
-
-
-        // 1) 초기 상태 세팅
-        //resetCards();
-
-        // 2) ScrollTrigger로 룩북 섹션 진입/퇴장 감지
+        // ScrollTrigger로 룩북 섹션 제어
         ScrollTrigger.create({
             trigger: '.lookbook',
             start: 'top top',
-            end: '+=150%',                 // ⭐ 변경: 150% → 250% (충분한 시간 확보)
+            end: '+=150%',
             pin: true,
-            pinSpacing: true,              // ⭐ 다시 true로
-            anticipatePin: 1,              // ⭐ 추가: pin 부드럽게
+            pinSpacing: true,
+            anticipatePin: 1,
             markers: false,
             onEnter: () => {
-
                 resetCards();
                 playAnimation();
                 setTimeout(() => {
                     lockScroll(lenis);
-                }, 100); // 약간의 지연 후 실행
+                }, 100);
             },
             onEnterBack: () => {
                 resetCards();
                 playAnimation();
                 setTimeout(() => {
                     lockScroll(lenis);
-                }, 100); // 약간의 지연 후 실행
+                }, 100);
             },
             onLeave: () => {
                 if (mainTimeline) mainTimeline.kill();
@@ -329,10 +293,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (mainTimeline) mainTimeline.kill();
                 if (draggableInstance) draggableInstance.disable();
                 resetCards();
-            }
+            },
         });
 
-        // 3) 드래그 기능 초기화 함수
+        // 드래그 기능
         function initDraggable() {
             let startRotation = 0;
 
@@ -347,19 +311,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     const currentRotation = this.rotation;
                     const offset = Math.abs(currentRotation - startRotation);
 
-                    // 가장 가까운 카드 위치로 스냅
                     if (currentRotation > startRotation) {
                         if (currentRotation - startRotation < degree / 2) {
                             gsap.to('.lookbook_items', {
                                 rotation: `-=${offset}`,
                                 duration: 0.3,
-                                ease: 'power2.out'
+                                ease: 'power2.out',
                             });
                         } else {
                             gsap.to('.lookbook_items', {
                                 rotation: `+=${degree - offset}`,
                                 duration: 0.3,
-                                ease: 'power2.out'
+                                ease: 'power2.out',
                             });
                         }
                     } else {
@@ -367,13 +330,13 @@ document.addEventListener('DOMContentLoaded', () => {
                             gsap.to('.lookbook_items', {
                                 rotation: `+=${offset}`,
                                 duration: 0.3,
-                                ease: 'power2.out'
+                                ease: 'power2.out',
                             });
                         } else {
                             gsap.to('.lookbook_items', {
                                 rotation: `-=${degree - offset}`,
                                 duration: 0.3,
-                                ease: 'power2.out'
+                                ease: 'power2.out',
                             });
                         }
                     }
@@ -382,7 +345,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // ==================== CONTACT 섹션 고정 + 해바라기 애니메이션 ====================
+    // ==================== CONTACT 섹션 텍스트/이미지 등장 ====================
     const contactSection = document.querySelector('.contact');
 
     if (contactSection) {
@@ -390,21 +353,9 @@ document.addEventListener('DOMContentLoaded', () => {
             trigger: '.contact',
             start: 'top top',
             markers: false,
-
             onEnter: () => {
                 contactSection.classList.add('is-visible');
             },
-            /*             onEnterBack: () => {
-                            contactSection.classList.add('is-visible');
-                        },
-                        onLeave: () => {
-                            contactSection.classList.remove('is-visible');
-                        },
-                        onLeaveBack: () => {
-                            contactSection.classList.remove('is-visible');
-                        } */
-
         });
     }
-
 });

@@ -117,78 +117,146 @@ header.dark ul li a:hover {
     letter-spacing: 0.2em;
 }
 
-.contents {
-    /* padding-top: 50vh; */
+/* ==================== ABOUT ME ==================== */
+
+.about_me {
     width: 100%;
     min-height: 100vh;
-    background-color: #0a0a0a;
-}
-
-.contents .container {
-    width: 100%;
-    height: 100vh;
-    position: relative;
-    display: flex;
-    padding: 0 8%;
-    align-items: center;
-    gap: 5rem;
     background-color: #FAF8F3;
 }
 
-/* 왼쪽 해바라기 */
-.contents_left {
+.about_me_content {
+    width: 100%;
+    height: 100vh;
+    padding: 0 9% 0 3%;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    /* 2rem → 3rem */
+}
+
+/* 왼쪽 해바라기 영역 */
+.about_me_left {
     flex: 0 0 45%;
+    /* 48% → 45% */
     display: flex;
     justify-content: flex-start;
     align-items: flex-end;
+    height: 100%;
 }
 
 .sunflower02 {
-    width: 100%;
-    max-width: 900px;
-    /* 꽃 크기 조절 */
-    transform: translateY(20px);
-    /* 레퍼런스처럼 살짝 아래로 */
+    width: 95%;
+    /* 100% → 95% */
+    max-width: 680px;
+    /* 720px → 680px */
+    height: auto;
+    transform: translateY(0);
 }
 
-/* 오른쪽 텍스트 */
-.contents_right {
+/* 오른쪽 텍스트 영역 */
+.about_me_right {
     flex: 0 0 55%;
+    /* 52% → 55% */
+    margin-bottom: 0;
+    margin-top: 60px;
 }
 
-.contents_title {
-    font-size: 3rem;
+/* ===== 상단 인트로 + 따옴표 ===== */
+
+.about_me_intro {
+    position: relative;
+    padding: 0 35px 30px;
+    /* 하단 패딩 증가 */
+    margin-bottom: 50px;
+    /* 여백 증가 */
+    text-align: center;
+    border-bottom: 2px solid #F0CF7D;
+}
+
+.about_me_maintxt {
+    font-size: 2rem;
+    /* 1.875rem → 1.5rem (24px) */
+    line-height: 1.6;
+    /* 1.5 → 1.6 */
     font-weight: 700;
-    margin-bottom: 1.5rem;
-    letter-spacing: 0.05em;
 }
 
-.contents_list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    margin-top: 2rem;
-}
-
-.contents_list li {
-    display: flex;
-    align-items: center;
-    gap: 1.3rem;
-    margin-bottom: 1.4rem;
-    font-size: 1.6rem;
-}
-
-.num {
+.quote_left,
+.quote_right {
+    position: absolute;
+    top: -8px;
+    /* -10px → -8px */
+    font-size: 3.5rem;
+    /* 4rem → 3.5rem */
+    font-weight: 700;
     color: #FFCA45;
+    line-height: 1;
+}
+
+.quote_left {
+    left: 0;
+}
+
+.quote_right {
+    right: 0;
+}
+
+/* ===== 하단 3가지 강점 리스트 ===== */
+
+.about_me_items {
+    display: flex;
+    flex-direction: column;
+    gap: 46px;
+}
+
+.about_me_item {
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+    position: relative;
+}
+
+.about_me_num {
+    min-width: 45px;
+    font-size: 1.8rem;
     font-weight: 700;
+    color: #FFCA45;
+    margin-top: 0;
+    padding-right: 18px;
+    position: relative;
 }
 
-.txt {
+/* 숫자 뒤 세로 선 */
+.about_me_num::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2px;
+    height: 36px;
+    background-color: #FFCA45;
+}
+
+.about_me_item_body {
+    flex: 1;
+}
+
+.about_me_item_title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+.about_me_item_text {
+    font-size: 1.125rem;
+    line-height: 1.6;
     color: #111;
-    font-weight: 500;
 }
 
-/* style.css 수정 부분 */
+/* projects */
 
 .projects {
     width: 100%;
