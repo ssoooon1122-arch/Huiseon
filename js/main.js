@@ -285,7 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ScrollTrigger.create({
             trigger: '.lookbook',
             start: 'top top',              // ⭐ 변경
-            end: '+=200%',                 // ⭐ 추가
+            end: '+=100%',                 // ⭐ 추가
             pin: true,                     // ⭐ 추가
             pinSpacing: true,              // ⭐ 추가
             markers: false,
@@ -375,22 +375,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // ==================== CONTACT Sunflower Fade-in ====================
+    // ==================== CONTACT 섹션 고정 + 해바라기 애니메이션 ====================
     const contactSection = document.querySelector('.contact');
-    if (contactSection) {
-        const contactObserver = new IntersectionObserver(
-            (entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        contactSection.classList.add('is-visible');
-                        contactObserver.unobserve(contactSection); // 한 번만 실행
-                    }
-                });
-            },
-            { threshold: 0.4 } // 섹션의 40% 정도 보이면 발동
-        );
 
-        contactObserver.observe(contactSection);
+    if (contactSection) {
+        ScrollTrigger.create({
+            trigger: '.contact',
+            start: 'top top',
+            // end: '+=100%',
+            // pin: true,
+            // pinSpacing: true,
+            markers: false,
+
+            onEnter: () => {
+                contactSection.classList.add('is-visible');
+            },
+
+            onLeaveBack: () => {
+                contactSection.classList.remove('is-visible');
+            }
+        });
     }
 
 });
