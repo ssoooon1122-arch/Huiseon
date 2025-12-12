@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ==================== Header Dark Mode (About 섹션 진입 시 색 바뀌는 부분) ====================
     const header = document.querySelector('header');
-    const aboutSection = document.querySelector('.about_me'); // ✅ .contents → .about_me
+    const aboutSection = document.querySelector('.about_me');
 
     const observer = new IntersectionObserver(
         (entries) => {
@@ -34,7 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
         { threshold: 0.3 }
     );
 
-    // ✅ 섹션이 실제 있을 때만 observe 해서 에러 방지
     if (aboutSection) {
         observer.observe(aboutSection);
     }
@@ -75,17 +74,14 @@ document.addEventListener('DOMContentLoaded', () => {
         markers: false,
     });
 
-    // ==============================================
-    // ★ PROJECTS 3D Tunnel & Drop Effect ★
-    // ==============================================
+    // ==================== PROJECTS 3D Tunnel & Drop Effect ====================
     const projectsSection = document.querySelector('.projects');
     const boxes = gsap.utils.toArray('.box');
 
-    const zGap = 2000;       // 카드 간 z 간격
-    const xOffset = 400;     // 좌우 벌어짐
+    const zGap = 2000;
+    const xOffset = 400;
     const totalDistance = zGap * boxes.length;
 
-    // 초기 위치 세팅
     boxes.forEach((box, i) => {
         const xPosition = (i % 2 === 0) ? -xOffset : xOffset;
 
@@ -99,7 +95,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 메인 스크롤 타임라인
     const projectsTimeline = gsap.timeline({
         scrollTrigger: {
             trigger: '.projects',
@@ -117,7 +112,6 @@ document.addEventListener('DOMContentLoaded', () => {
         duration: 1,
     });
 
-    // 개별 박스 시각 효과
     boxes.forEach((box) => {
         gsap.to(box, {
             scrollTrigger: {
@@ -248,7 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 mainTimeline.to(
                     card,
                     {
-                        transformOrigin: 'center 150vh', // ✅ 200vh → 150vh
+                        transformOrigin: 'center 150vh',
                         rotation:
                             index > total / 2
                                 ? -degree * (total - index)
@@ -261,7 +255,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // ScrollTrigger로 룩북 섹션 제어
         ScrollTrigger.create({
             trigger: '.lookbook',
             start: 'top top',
@@ -296,7 +289,6 @@ document.addEventListener('DOMContentLoaded', () => {
             },
         });
 
-        // 드래그 기능
         function initDraggable() {
             let startRotation = 0;
 
@@ -358,4 +350,21 @@ document.addEventListener('DOMContentLoaded', () => {
             },
         });
     }
+
+    // ==================== 네비게이션 스크롤 ====================
+    document.querySelectorAll('header a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            const targetId = this.getAttribute('href').substring(1);
+            const targetSection = document.getElementById(targetId);
+
+            if (targetSection) {
+                lenis.scrollTo(targetSection, {
+                    duration: 1.5,
+                    easing: (t) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t
+                });
+            }
+        });
+    });
 });
