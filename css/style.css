@@ -467,15 +467,35 @@ header.dark ul li a:hover {
     line-height: 1.1;
     font-weight: 700;
     color: #fafafa;
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(20px);
+    transition: all 1s ease;
+}
 
+.contact.is-visible .contact__title {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+    transition-delay: 0.2s;
 }
 
 .contact__subtitle {
     font-size: 36px;
     margin-top: 24px;
     line-height: 1.4;
-    opacity: 0.9;
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(20px);
+    transition: all 1s ease;
     color: #fafafa;
+}
+
+.contact.is-visible .contact__subtitle {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+    transition-delay: 0.5s;
 }
 
 /* CONNECT 영역 (오른쪽 아래) */
@@ -510,17 +530,15 @@ header.dark ul li a:hover {
     pointer-events: none;
 }
 
+/* ⭐ 해바라기 딜레이 추가 */
 .contact__sunflower {
     width: 1240px;
     height: auto;
-
     opacity: 0;
-    /* 처음엔 안 보임 */
     transform: translateY(40px);
-    /* 아래에서 대기 */
+    transition: opacity 1.5s ease 0.8s, transform 1.5s ease 0.8s;
 }
 
-/* contact가 보이면 → 위로 올라오면서 밝아짐 */
 .contact.is-visible .contact__sunflower {
     opacity: 1;
     transform: translateY(0);

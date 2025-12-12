@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
         scrollTrigger: {
             trigger: '.intro',
             start: 'top top',
-            end: '+=200%',
+            end: '+=150%',
             scrub: 2,
             pin: true,
             markers: false,
@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ScrollTrigger.create({
         trigger: 'section.contents',
         start: 'top top',
-        end: '+=200%',
+        end: '+=150%',
         pin: true,
         pinSpacing: true,
         markers: false,
@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
             trigger: '.projects',
             start: 'top top',
             // ★ 중요: 스크롤 길이를 충분히 줘서 마지막 카드가 지나갈 시간을 확보
-            end: `+=${totalDistance + 2000}`,
+            end: `+=${totalDistance + 100}`,
             scrub: 2.0, // 숫자가 클수록 스크롤 멈췄을 때 미끄러지는(부드러운) 느낌이 강함
             pin: true,
             markers: false
@@ -284,10 +284,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // 2) ScrollTrigger로 룩북 섹션 진입/퇴장 감지
         ScrollTrigger.create({
             trigger: '.lookbook',
-            start: 'top top',              // ⭐ 변경
-            end: '+=100%',                 // ⭐ 추가
-            pin: true,                     // ⭐ 추가
-            pinSpacing: true,              // ⭐ 추가
+            start: 'top top',
+            end: '+=150%',                 // ⭐ 변경: 150% → 250% (충분한 시간 확보)
+            pin: true,
+            pinSpacing: true,              // ⭐ 다시 true로
+            anticipatePin: 1,              // ⭐ 추가: pin 부드럽게
             markers: false,
 
             onEnter: () => {
@@ -381,19 +382,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (contactSection) {
         ScrollTrigger.create({
             trigger: '.contact',
-            start: 'top top',
-            // end: '+=100%',
-            // pin: true,
-            // pinSpacing: true,
+            start: 'top bottom',
             markers: false,
 
             onEnter: () => {
                 contactSection.classList.add('is-visible');
             },
 
-            onLeaveBack: () => {
-                contactSection.classList.remove('is-visible');
-            }
         });
     }
 
