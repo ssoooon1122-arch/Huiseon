@@ -394,15 +394,15 @@ document.addEventListener('DOMContentLoaded', () => {
             onEnter: () => {
                 contactSection.classList.add('is-visible');
             },
-            onEnterBack: () => {
-                contactSection.classList.add('is-visible');
-            },
-            onLeave: () => {
-                contactSection.classList.remove('is-visible');
-            },
-            onLeaveBack: () => {
-                contactSection.classList.remove('is-visible');
-            }
+            /*             onEnterBack: () => {
+                            contactSection.classList.add('is-visible');
+                        },
+                        onLeave: () => {
+                            contactSection.classList.remove('is-visible');
+                        },
+                        onLeaveBack: () => {
+                            contactSection.classList.remove('is-visible');
+                        } */
 
         });
     }
