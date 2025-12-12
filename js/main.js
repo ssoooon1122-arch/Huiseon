@@ -248,7 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 mainTimeline.to(
                     card,
                     {
-                        transformOrigin: 'center 200vh',
+                        transformOrigin: 'center 150vh', // ✅ 200vh → 150vh
                         rotation:
                             index > total / 2
                                 ? -degree * (total - index)

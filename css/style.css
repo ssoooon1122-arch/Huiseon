@@ -451,7 +451,7 @@ header.dark ul li a:hover {
 }
 
 .lookbook_items {
-    transform-origin: center 200vh;
+    transform-origin: center 150vh;
     /* 회전 중심축을 아래쪽(200vh)으로 설정 */
     transform: rotate(0);
     user-select: none;
