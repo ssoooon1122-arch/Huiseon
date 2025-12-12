@@ -284,8 +284,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // 2) ScrollTrigger로 룩북 섹션 진입/퇴장 감지
         ScrollTrigger.create({
             trigger: '.lookbook',
-            start: 'top 40%',
-            end: 'bottom 20%',
+            start: 'top top',              // ⭐ 변경
+            end: '+=200%',                 // ⭐ 추가
+            pin: true,                     // ⭐ 추가
+            pinSpacing: true,              // ⭐ 추가
+            markers: false,
 
             onEnter: () => {
                 // 섹션에 진입할 때마다 애니메이션 재생
@@ -371,5 +374,23 @@ document.addEventListener('DOMContentLoaded', () => {
             })[0];
         }
     });
+
+    // ==================== CONTACT Sunflower Fade-in ====================
+    const contactSection = document.querySelector('.contact');
+    if (contactSection) {
+        const contactObserver = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        contactSection.classList.add('is-visible');
+                        contactObserver.unobserve(contactSection); // 한 번만 실행
+                    }
+                });
+            },
+            { threshold: 0.4 } // 섹션의 40% 정도 보이면 발동
+        );
+
+        contactObserver.observe(contactSection);
+    }
 
 });
