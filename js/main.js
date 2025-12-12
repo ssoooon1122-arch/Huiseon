@@ -17,55 +17,65 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     requestAnimationFrame(raf);
 
-    // ==================== Header Dark Mode (About 섹션 진입 시 색 바뀌는 부분) ====================
+    // ✅ iOS/폰트/이미지 로드 등으로 레이아웃 바뀌는 케이스 대비
+    window.addEventListener('load', () => {
+        ScrollTrigger.refresh();
+    });
+
+    // ==================== Header Dark Mode ====================
     const header = document.querySelector('header');
     const aboutSection = document.querySelector('.about_me');
 
     const observer = new IntersectionObserver(
         (entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    header.classList.add('dark');
-                } else {
-                    header.classList.remove('dark');
-                }
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) header.classList.add('dark');
+                else header.classList.remove('dark');
             });
         },
         { threshold: 0.3 }
     );
 
-    if (aboutSection) {
-        observer.observe(aboutSection);
-    }
+    if (aboutSection) observer.observe(aboutSection);
 
-    // ==================== Intro 스크롤 애니메이션 ====================
+    // ==================== Intro (pin) ====================
     const introTimeline = gsap.timeline({
         scrollTrigger: {
+            id: 'introTrigger',
             trigger: '.intro',
             start: 'top top',
             end: '+=150%',
             scrub: 2,
             pin: true,
             markers: false,
-        }
+        },
     });
 
     introTimeline
-        .to('.sunflower01', {
-            x: 200,
-            y: 500,
-            scale: 1,
-            ease: 'none'
-        }, 0)
-        .to('.intro_text', {
-            opacity: 1,
-            y: 0,
-            ease: 'none'
-        }, 0)
+        .to(
+            '.sunflower01',
+            {
+                x: 200,
+                y: 500,
+                scale: 1,
+                ease: 'none',
+            },
+            0
+        )
+        .to(
+            '.intro_text',
+            {
+                opacity: 1,
+                y: 0,
+                ease: 'none',
+            },
+            0
+        )
         .to({}, { duration: 2 });
 
-    // ==================== ABOUT_ME 섹션 고정 ====================
+    // ==================== ABOUT (pin) ====================
     ScrollTrigger.create({
+        id: 'aboutTrigger',
         trigger: '.about_me',
         start: 'top top',
         end: '+=150%',
@@ -74,16 +84,14 @@ document.addEventListener('DOMContentLoaded', () => {
         markers: false,
     });
 
-    // ==================== PROJECTS 3D Tunnel & Drop Effect ====================
-    const projectsSection = document.querySelector('.projects');
+    // ==================== PROJECTS 3D (pin) ====================
     const boxes = gsap.utils.toArray('.box');
-
     const zGap = 2000;
     const xOffset = 400;
     const totalDistance = zGap * boxes.length;
 
     boxes.forEach((box, i) => {
-        const xPosition = (i % 2 === 0) ? -xOffset : xOffset;
+        const xPosition = i % 2 === 0 ? -xOffset : xOffset;
 
         gsap.set(box, {
             z: -i * zGap,
@@ -97,13 +105,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const projectsTimeline = gsap.timeline({
         scrollTrigger: {
+            id: 'projectsTrigger',
             trigger: '.projects',
             start: 'top top',
             end: `+=${totalDistance + 100}`,
             scrub: 2.0,
             pin: true,
             markers: false,
-        }
+        },
     });
 
     projectsTimeline.to(boxes, {
@@ -128,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (currentZ < -4000) {
                         gsap.set(box, { opacity: 0, filter: 'blur(20px)' });
                     } else if (currentZ >= -4000 && currentZ < -500) {
-                        const progress = 1 - (Math.abs(currentZ) / 4000);
+                        const progress = 1 - Math.abs(currentZ) / 4000;
                         gsap.set(box, {
                             opacity: progress,
                             filter: `blur(${(1 - progress) * 10}px)`,
@@ -147,208 +156,215 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // ==================== LOOKBOOK Draggable 코드 (수정본) ====================
-    window.addEventListener('load', () => {
-        if (typeof gsap === 'undefined' || typeof Draggable === 'undefined') {
-            console.error('GSAP 또는 Draggable 플러그인을 로드할 수 없습니다.');
-            return;
-        }
+    // ==================== LOOKBOOK (pin + enter animation + draggable) ====================
+    const lookbookCards = gsap.utils.toArray('.lookbook_item');
+    const lookbookItems = document.querySelector('.lookbook_items');
 
-        const cards = gsap.utils.toArray('.lookbook_item');
-        if (!cards.length) {
-            console.error('.lookbook_item 요소를 찾을 수 없습니다.');
-            return;
-        }
+    let lookbookTL = null;
+    let lookbookDrag = null;
 
-        const total = cards.length;
-        const degree = 360 / total;
-        let draggableInstance = null;
-        let mainTimeline = null;
+    function resetLookbookCards() {
+        if (!lookbookCards.length) return;
 
-        // Lenis 인스턴스가 전역으로 'lenis' 변수에 존재한다고 가정
-        function lockScroll() {
-            if (typeof lenis !== 'undefined') lenis.stop();
-        }
-
-        function unlockScroll() {
-            if (typeof lenis !== 'undefined') lenis.start();
-        }
-
-        function resetCards() {
-            cards.forEach((card, index) => {
-                gsap.set(card, {
-                    x: index % 2
+        lookbookCards.forEach((card, index) => {
+            gsap.set(card, {
+                x:
+                    index % 2
                         ? window.innerWidth + card.clientWidth * 4
                         : -window.innerWidth - card.clientWidth * 4,
-                    y: window.innerHeight - card.clientHeight,
-                    rotation: index % 2 ? 200 : -200,
-                    scale: 4,
-                    opacity: 0,
-                    transformOrigin: 'center center',
-                });
+                y: window.innerHeight - card.clientHeight,
+                rotation: index % 2 ? 200 : -200,
+                scale: 4,
+                opacity: 0,
+                transformOrigin: 'center center',
             });
+        });
 
-            if (draggableInstance) {
-                // reset 시 rotation도 0으로 초기화
-                gsap.set('.lookbook_items', { rotation: 0 });
-            }
+        gsap.set(lookbookItems, { rotation: 0 });
+    }
+
+    function killLookbook() {
+        if (lookbookTL) {
+            lookbookTL.kill();
+            lookbookTL = null;
         }
-
-        function playAnimation() {
-            if (mainTimeline) {
-                mainTimeline.kill();
-            }
-
-            mainTimeline = gsap.timeline({
-                onComplete: () => {
-                    unlockScroll();
-                    if (!draggableInstance) {
-                        initDraggable();
-                    } else {
-                        draggableInstance.enable();
-                    }
-                },
-            });
-
-            cards.forEach((card, index) => {
-                const sign = Math.floor((index / 2) % 2) ? 1 : -1;
-                const value = Math.floor((index + 4) / 4) * 4;
-                const initialRotation = index > total - 3 ? 0 : sign * value;
-
-                // 1. 초기 위치에서 가운데로 모이는 애니메이션
-                mainTimeline.to(
-                    card,
-                    {
-                        x: 0,
-                        y: 0,
-                        rotation: initialRotation,
-                        scale: 0.5,
-                        opacity: 1,
-                        ease: 'power4.out',
-                        duration: 1,
-                        delay: 0.15 * Math.floor(index / 2),
-                    },
-                    0
-                );
-
-                const rotationAngle = index * degree;
-
-                // 2. 카드들이 3D 서클 형태로 회전하는 최종 위치로 이동
-                mainTimeline.to(
-                    card,
-                    {
-                        scale: 1,
-                        duration: 0,
-                    },
-                    0.15 * (total / 2 - 1) + 1
-                );
-
-                // CSS에서 transform-origin: center 150vh; 로 변경했으므로 해당 값 유지
-                mainTimeline.to(
-                    card,
-                    {
-                        transformOrigin: 'center 150vh',
-                        rotation: rotationAngle,
-                        duration: 1,
-                        ease: 'power1.out',
-                    },
-                    0.15 * (total / 2 - 1) + 1
-                );
-            });
+        if (lookbookDrag) {
+            lookbookDrag.disable();
+            // killTweens도 같이
+            gsap.killTweensOf(lookbookItems);
         }
+    }
 
-        // ScrollTrigger로 룩북 섹션 제어 (start 지점 및 onLeave 스크롤 해제 로직 수정)
-        ScrollTrigger.create({
-            trigger: '.lookbook',
-            // start: 'top top', // GNB 연결 후 충돌 방지를 위해 start 지점을 조정해 볼 수 있습니다.
-            start: 'top 10%',
-            end: '+=150%',
-            pin: true,
-            pinSpacing: true,
-            anticipatePin: 1,
-            markers: false,
-            onEnter: () => {
-                resetCards();
-                playAnimation();
-                setTimeout(() => {
-                    lockScroll();
-                }, 100);
+    function initLookbookDraggable(degree) {
+        // ✅ 기존 드래그 있으면 제거/비활성
+        if (lookbookDrag) lookbookDrag.disable();
+
+        lookbookDrag = Draggable.create(lookbookItems, {
+            type: 'rotation',
+            inertia: false,
+            // ✅ 스냅: 카드 하나 단위로
+            snap: {
+                rotation: gsap.utils.snap(degree),
             },
-            onEnterBack: () => {
-                resetCards();
-                playAnimation();
-                setTimeout(() => {
-                    lockScroll();
-                }, 100);
+            onDragStart: () => {
+                gsap.killTweensOf(lookbookItems);
             },
-            onLeave: () => {
-                if (mainTimeline) mainTimeline.kill();
-                if (draggableInstance) draggableInstance.disable();
-                resetCards();
-                unlockScroll(); // ★ 섹션 이탈 시 스크롤 잠금 해제
-            },
-            onLeaveBack: () => {
-                if (mainTimeline) mainTimeline.kill();
-                if (draggableInstance) draggableInstance.disable();
-                resetCards();
-                unlockScroll(); // ★ 섹션 이탈 시 스크롤 잠금 해제
+        })[0];
+
+        lookbookDrag.enable();
+    }
+
+    function playLookbookEnterAnimation() {
+        if (!lookbookCards.length) return;
+
+        const total = lookbookCards.length;
+        const degree = 360 / total;
+
+        killLookbook();
+
+        lookbookTL = gsap.timeline({
+            onComplete: () => {
+                // ✅ 애니 끝나면 드래그 활성
+                initLookbookDraggable(degree);
+                // ✅ 섹션 진입 시 잠깐 멈췄던 스크롤 다시 허용
+                lenis.start();
             },
         });
 
-        // 드래그 기능 (GSAP Snap 사용으로 360도 무한 반복 안정화)
-        function initDraggable() {
-            // degree 간격으로 스냅 포인트를 생성하고 360도 범위 내로 유지 (선택 사항)
-            const snapPoints = gsap.utils.pipe(
-                gsap.utils.snap(degree),
-                (rotation) => rotation % 360 // 360도 이상 회전 시에도 스냅 로직은 유지
+        lookbookCards.forEach((card, index) => {
+            const sign = Math.floor((index / 2) % 2) ? 1 : -1;
+            const value = Math.floor((index + 4) / 4) * 4;
+            const initialRotation = index > total - 3 ? 0 : sign * value;
+
+            // 1) 중앙으로 모이기
+            lookbookTL.to(
+                card,
+                {
+                    x: 0,
+                    y: 0,
+                    rotation: initialRotation,
+                    scale: 0.5,
+                    opacity: 1,
+                    ease: 'power4.out',
+                    duration: 1,
+                    delay: 0.15 * Math.floor(index / 2),
+                },
+                0
             );
 
-            draggableInstance = Draggable.create('.lookbook_items', {
-                type: 'rotation',
-                snap: {
-                    rotation: snapPoints
-                },
-                // inertia: true, // 관성을 추가하여 부드러움을 높일 수 있음 (선택 사항)
-                onDragStart: function () {
-                    // 드래그 시작 시 관성 제거 (필요하다면)
-                    gsap.killTweensOf('.lookbook_items');
-                },
-                onDragEnd: function () {
-                    // GSAP의 snap이 드래그 종료 시 자동으로 스냅 애니메이션을 처리합니다.
-                },
-            })[0];
-        }
-    });
+            // 2) 최종 원형 배치
+            const rotationAngle = index * degree;
 
-    // (나머지 CONTACT 섹션 및 네비게이션 스크롤 코드는 유지됩니다.)
-    // ==================== CONTACT 섹션 텍스트/이미지 등장 ====================
-    const contactSection = document.querySelector('.contact');
+            lookbookTL.to(
+                card,
+                { scale: 1, duration: 0 },
+                0.15 * (total / 2 - 1) + 1
+            );
 
-    if (contactSection) {
-        ScrollTrigger.create({
-            trigger: '.contact',
-            start: 'top top',
-            markers: false,
-            onEnter: () => {
-                contactSection.classList.add('is-visible');
-            },
+            lookbookTL.to(
+                card,
+                {
+                    transformOrigin: 'center 150vh',
+                    rotation: rotationAngle,
+                    duration: 1,
+                    ease: 'power1.out',
+                },
+                0.15 * (total / 2 - 1) + 1
+            );
         });
     }
 
-    // ==================== 네비게이션 스크롤 ====================
-    document.querySelectorAll('header a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
+    // ✅ 룩북 ScrollTrigger (핵심: id 부여 + 네비 점프 시에도 동일하게 동작)
+    ScrollTrigger.create({
+        id: 'lookbookTrigger',
+        trigger: '.lookbook',
+        start: 'top top',
+        end: '+=150%',
+        pin: true,
+        pinSpacing: true,
+        anticipatePin: 1,
+        markers: false,
+
+        onEnter: () => {
+            // ✅ 들어오자마자: 카드 초기화 → 애니 실행 → 스크롤 잠깐 잠금
+            resetLookbookCards();
+            lenis.stop();
+            playLookbookEnterAnimation();
+        },
+        onEnterBack: () => {
+            resetLookbookCards();
+            lenis.stop();
+            playLookbookEnterAnimation();
+        },
+
+        onLeave: () => {
+            // ✅ 나갈 때: 드래그/타임라인 종료 + 스크롤 복구
+            killLookbook();
+            lenis.start();
+        },
+        onLeaveBack: () => {
+            killLookbook();
+            lenis.start();
+        },
+    });
+
+    // ✅ 리사이즈 시 룩북/핀 재계산
+    window.addEventListener('resize', () => {
+        // 룩북 카드가 화면 밖으로 날아가는 기준값들이 윈도우 사이즈에 영향 받음
+        resetLookbookCards();
+        ScrollTrigger.refresh();
+    });
+
+    // ==================== CONTACT ====================
+    const contactSection = document.querySelector('.contact');
+    if (contactSection) {
+        ScrollTrigger.create({
+            id: 'contactTrigger',
+            trigger: '.contact',
+            start: 'top top',
+            markers: false,
+            onEnter: () => contactSection.classList.add('is-visible'),
+            onEnterBack: () => contactSection.classList.add('is-visible'),
+        });
+    }
+
+    // ==================== NAV (🔥 pin 섹션에서 절대 안 깨지는 방식) ====================
+    // ✅ Lenis scrollTo로 점프하면 pin 보정 꼬여서 룩북부터 깨짐.
+    // ✅ 그래서 "해당 섹션의 ScrollTrigger start 지점"으로 순간 이동 + refresh가 정답.
+    const navMap = {
+        intro: 'introTrigger',
+        about: 'aboutTrigger',
+        projects: 'projectsTrigger',
+        lookbook: 'lookbookTrigger',
+        contact: 'contactTrigger',
+    };
+
+    document.querySelectorAll('header a[href^="#"]').forEach((a) => {
+        a.addEventListener('click', (e) => {
             e.preventDefault();
 
-            const targetId = this.getAttribute('href').substring(1);
-            const targetSection = document.getElementById(targetId);
+            const targetId = a.getAttribute('href').replace('#', '');
+            const trigId = navMap[targetId];
+            if (!trigId) return;
 
-            if (targetSection) {
-                lenis.scrollTo(targetSection, {
-                    duration: 1.5,
-                    easing: (t) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t
-                });
-            }
+            const st = ScrollTrigger.getById(trigId);
+            if (!st) return;
+
+            // ✅ 룩북처럼 들어가며 스크롤 잠그는 섹션이 있으니
+            // 우선 스크롤 허용 상태로 만들고 이동
+            lenis.start();
+
+            // ✅ ScrollTrigger 기준 위치로 이동(핀 보정 포함)
+            window.scrollTo(0, st.start + 1);
+
+            // ✅ 이동 직후 보정 필수
+            ScrollTrigger.refresh(true);
+            ScrollTrigger.update();
+
+            // ✅ 바로 해당 섹션 onEnter가 확실히 실행되도록
+            requestAnimationFrame(() => {
+                ScrollTrigger.update();
+            });
         });
     });
 });
