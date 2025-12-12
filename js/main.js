@@ -167,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const total = cards.length;
-        const degree = 360 / total / 1.5;
+        const degree = 360 / total;
         let draggableInstance = null;
         let mainTimeline = null;
 
