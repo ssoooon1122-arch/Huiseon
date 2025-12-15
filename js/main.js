@@ -322,7 +322,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ScrollTrigger.create({
             id: 'contactTrigger',
             trigger: '.contact',
-            start: 'top 10%',
+            start: 'top top',
             markers: false,
             // GNB에서 직접 처리하므로 여기는 일반 스크롤링 시에만 작동하도록 유지
             onEnter: () => contactSection.classList.add('is-visible'),
