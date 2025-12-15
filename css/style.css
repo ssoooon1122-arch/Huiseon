@@ -475,7 +475,7 @@ header.dark ul li a:hover {
     height: 610px;
     color: #fff;
     user-select: none;
-    border-radius: 16px;
+    border-radius: 5px;
     overflow: hidden;
     cursor: grab;
     position: relative;
