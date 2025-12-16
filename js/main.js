@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // ==================== GSAP 플러그인 ====================
-    gsap.registerPlugin(ScrollTrigger, Draggable); // Draggable 플러그인도 등록해야 합니다.
+    gsap.registerPlugin(ScrollTrigger, Draggable);
 
     // ==================== Lenis (Smooth Scroll) ====================
     const lenis = new Lenis({
@@ -83,6 +83,19 @@ document.addEventListener('DOMContentLoaded', () => {
         pin: true,
         pinSpacing: true,
         markers: false,
+    });
+
+    // ✅ ABOUT ME - 각 아이템 순차 등장
+    gsap.from('.about_me_item', {
+        opacity: 0,
+        y: 50,
+        stagger: 0.3,
+        scrollTrigger: {
+            trigger: '.about_me_items',
+            start: 'top 80%',
+            end: 'top 30%',
+            scrub: 1,
+        }
     });
 
     // ==================== PROJECTS 3D (pin) ====================
