@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
     gsap.from('.about_me_item', {
         opacity: 0,
         y: 50,
-        stagger: 0.3,
+        stagger: 0.5,
         scrollTrigger: {
             trigger: '.about_me_items',
             start: 'top 80%',
