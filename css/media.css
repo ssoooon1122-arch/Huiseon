@@ -1,0 +1,249 @@
+@charset "utf-8";
+
+@media (max-width: 1366px) {
+  header { padding: 1.5rem; }
+  header ul li a { font-size: 16px; }
+
+  /* Intro */
+  .year { font-size: 1.05rem; }
+  .name { font-size: 4.2rem; }
+  .intro_text { left: 4%; top: 28%; }
+  .scroll_indicator { bottom: 2.2rem; }
+
+  /* About */
+  .about_me_content {
+    padding: 0 7% 0 3%;
+    gap: 2.2rem;
+  }
+  .about_me_right { margin-top: 40px; }
+  .about_me_intro { margin-bottom: 40px; }
+  .about_me_maintxt { font-size: 1.75rem; }
+
+  .about_me_items { gap: 40px; }
+  .about_me_item_body { flex: 0 1 500px; }
+  .about_me_item_title { font-size: 1.65rem; }
+  .about_me_item_text { font-size: 1.05rem; }
+
+  /* Projects */
+  .projects_txt { top: 13%; }
+  .projects_txt .title { font-size: 4.2rem; }
+  .projects_txt .subtitle { font-size: 1.3rem; }
+
+  .box {
+    width: 640px;
+    height: 460px;
+    padding: 34px;
+    gap: 30px;
+  }
+  .box_right .box_title { font-size: 2rem; }
+  .box_right .box_txt { margin-bottom: 28px; }
+  .btns { gap: 12px; }
+  .btns .box_btn { padding: 10px 22px; }
+
+  /* Lookbook */
+  .lookbook_txt { padding-top: 120px; }
+  .lookbook_title { font-size: 3rem; }
+  .lookbook_subtitle { margin-bottom: 80px; }
+  .lookbook_center { top: 26%; }
+
+  .lookbook_card_style {
+    width: 380px;
+    height: 540px;
+  }
+
+  /* Contact */
+  .contact { padding: 150px 60px 40px; }
+  .contact__title { font-size: 64px; }
+  .contact__subtitle { font-size: 28px; }
+
+  .contact__connect { right: 60px; bottom: 36px; }
+  .connect__label, .connect__email { font-size: 20px; }
+
+  .contact__sunflower { width: 980px; }
+  .contact__image { bottom: -520px; }
+}
+
+/* ---------------------------------------
+   2) ✅ ~1280px (MacBook 13" 핵심 구간)
+---------------------------------------- */
+@media (max-width: 1280px) {
+  header { padding: 1.2rem; }
+  header ul { gap: 1.5rem; }
+
+  /* Intro */
+  .year { font-size: 1rem; }
+  .name { font-size: 3.8rem; }
+  .intro_text { top: 27%; }
+
+  /* About: 13인치에서 세로 꽉 차는 느낌 완화 */
+  .about_me_content {
+    padding: 0 6% 0 3%;
+    gap: 2rem;
+  }
+  .about_me_left { flex: 0 0 42%; }
+  .about_me_right { flex: 0 0 58%; margin-top: 30px; }
+  .sunflower02 { width: 92%; max-width: 620px; }
+
+  .about_me_intro { padding: 0 28px 24px; }
+  .quote_left, .quote_right { font-size: 3.1rem; top: -10px; }
+
+  .about_me_maintxt { font-size: 1.6rem; line-height: 1.55; }
+  .about_me_items { gap: 34px; }
+
+  .about_me_num {
+    width: 54px;
+    min-width: 54px;
+    font-size: 1.6rem;
+    padding-right: 14px;
+  }
+  .about_me_num::after { height: 32px; }
+
+  .about_me_item_body { flex: 0 1 460px; }
+  .about_me_item_title { font-size: 1.55rem; margin-bottom: 12px; }
+  .about_me_item_text { font-size: 1rem; line-height: 1.55; }
+
+  /* Projects */
+  .projects { perspective: 2400px; }
+  .projects_txt .title { font-size: 3.8rem; }
+
+  .box {
+    width: 600px;
+    height: 440px;
+    padding: 30px;
+    gap: 26px;
+  }
+  .box_right .box_label { font-size: 0.95rem; }
+  .box_right .box_title { font-size: 1.9rem; }
+  .box_right .box_txt { font-size: 0.95rem; margin-bottom: 24px; }
+
+  .btns .box_btn { padding: 10px 20px; font-size: 14px; }
+
+  /* Lookbook */
+  .lookbook_title { font-size: 2.8rem; }
+  .lookbook_center { top: 25%; }
+  .lookbook_card_style {
+    width: 360px;
+    height: 520px;
+  }
+
+  /* Contact */
+  .contact { padding: 140px 50px 40px; }
+  .contact__title { font-size: 58px; }
+  .contact__subtitle { font-size: 24px; }
+
+  .contact__connect { right: 50px; bottom: 34px; }
+  .connect__label, .connect__email { font-size: 18px; }
+
+  .contact__sunflower { width: 900px; }
+  .contact__image { bottom: -470px; }
+}
+
+/* -------------------------------
+   3) ~1024px (태블릿/작은 노트북)
+-------------------------------- */
+@media (max-width: 1024px) {
+  /* Header */
+  header { padding: 1rem; }
+  header ul li a { font-size: 15px; }
+
+  /* Intro */
+  .name { font-size: 3.2rem; }
+
+  /* About: 세로 스크롤 고려해 2단 → 1단 */
+  .about_me_content {
+    height: auto;
+    min-height: 100vh;
+    flex-direction: column;
+    padding: 110px 8% 80px;
+  }
+  .about_me_left,
+  .about_me_right {
+    flex: initial;
+    width: 100%;
+    margin-top: 0;
+  }
+  .about_me_left { justify-content: center; align-items: center; }
+  .sunflower02 { width: 70%; max-width: 520px; }
+
+  /* Projects: 카드 세로 배치(공간 확보) */
+  .box {
+    width: 86vw;
+    max-width: 680px;
+    height: auto;
+    min-height: 420px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 20px;
+  }
+  .box_left { flex: initial; }
+  .box_right .box_txt { margin-bottom: 18px; }
+  .btns { justify-content: center; flex-wrap: wrap; }
+
+  /* Lookbook */
+  .lookbook_txt { padding-top: 110px; }
+  .lookbook_card_style { width: 330px; height: 480px; }
+
+  /* Contact */
+  .contact { padding: 120px 30px 40px; }
+  .contact__title { font-size: 48px; }
+  .contact__subtitle { font-size: 20px; }
+  .contact__connect { right: 30px; }
+  .contact__sunflower { width: 760px; }
+  .contact__image { bottom: -420px; }
+}
+
+/* -------------------------------
+   4) ~768px (모바일 큰 화면)
+-------------------------------- */
+@media (max-width: 768px) {
+  /* Intro */
+  .intro_text { left: 6%; top: 24%; }
+  .name { font-size: 2.6rem; }
+  .year { font-size: 0.95rem; }
+
+  /* About */
+  .about_me_intro { padding: 0 18px 18px; }
+  .about_me_maintxt { font-size: 1.25rem; }
+  .quote_left, .quote_right { font-size: 2.6rem; }
+
+  .about_me_item { flex-direction: column; gap: 10px; }
+  .about_me_num {
+    width: auto;
+    min-width: 0;
+    padding-right: 0;
+  }
+  .about_me_num::after { display: none; }
+  .about_me_item_body { flex: 1; max-width: 520px; }
+
+  /* Projects */
+  .projects_txt .title { font-size: 2.8rem; }
+  .projects_txt .subtitle { font-size: 1.05rem; }
+
+  /* Lookbook */
+  .lookbook_title { font-size: 2.2rem; }
+  .lookbook_subtitle { font-size: 1rem; }
+  .lookbook_card_style { width: 280px; height: 420px; }
+
+  /* Contact */
+  .contact__title { font-size: 40px; }
+  .contact__subtitle { font-size: 18px; }
+  .contact__sunflower { width: 640px; }
+  .contact__image { bottom: -360px; }
+}
+
+/* -------------------------------
+   5) ~480px (모바일)
+-------------------------------- */
+@media (max-width: 480px) {
+  header ul { gap: 1rem; }
+  header ul li a { font-size: 13px; }
+
+  .name { font-size: 2.1rem; }
+  .projects_txt .title { font-size: 2.2rem; }
+
+  .lookbook_card_style { width: 240px; height: 360px; }
+
+  .contact { padding: 110px 18px 40px; }
+  .contact__connect { right: 18px; }
+  .contact__sunflower { width: 520px; }
+}
